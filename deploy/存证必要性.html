@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>什么是时间戳与存证 | 双锚时间戳存证</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='6' fill='%2300D4FF'/><path d='M12 6h6v6M18 6l-6 6' stroke='%230B1120' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/><circle cx='11' cy='17' r='5' stroke='%230B1120' stroke-width='2.5'/></svg>">
+<style>
+:root {
+  --bg-primary: #0B1120;
+  --bg-secondary: #111a2c;
+  --bg-card: #161f33;
+  --bg-card-hover: #1c2740;
+  --border: #2a3a5c;
+  --border-light: #3a4e75;
+  --accent: #00D4FF;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --success: #10B981;
+  --success-dim: rgba(16, 185, 129, 0.12);
+  --warning: #F59E0B;
+  --warning-dim: rgba(245, 158, 11, 0.12);
+  --danger: #F87171;
+  --danger-dim: rgba(248, 113, 113, 0.12);
+  --text-primary: #E8EDF5;
+  --text-secondary: #93A4C0;
+  --text-muted: #5A6B88;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== 导航 ===== */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11, 17, 32, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 15px; color: var(--text-primary); text-decoration: none;
+}
+.nav-links { display: flex; gap: 6px; list-style: none; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none;
+  padding: 8px 14px; border-radius: 6px; font-size: 14px; transition: all .2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--accent); background: var(--accent-dim); }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+/* ===== Hero ===== */
+.hero {
+  padding: 140px 0 72px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -220px; left: 50%;
+  transform: translateX(-50%); width: 820px; height: 820px;
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; background: var(--accent-dim);
+  border: 1px solid rgba(0,212,255,.25); border-radius: 100px;
+  font-size: 13px; color: var(--accent); margin-bottom: 22px; position: relative; z-index: 1;
+}
+.hero h1 {
+  font-size: clamp(30px, 4.6vw, 50px); font-weight: 700; line-height: 1.18;
+  letter-spacing: -0.02em; margin-bottom: 18px; position: relative; z-index: 1;
+}
+.hero h1 .hl {
+  background: linear-gradient(135deg, var(--accent), #7C3AED);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero .lead {
+  font-size: 17px; color: var(--text-secondary); max-width: 680px;
+  margin: 0 auto 26px; position: relative; z-index: 1;
+}
+.hero .proposition {
+  max-width: 740px; margin: 0 auto;
+  padding: 18px 26px; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 15px; color: var(--text-primary);
+  position: relative; z-index: 1;
+  border-left: 3px solid var(--accent);
+  text-align: left;
+}
+.hero .proposition strong { color: var(--accent); }
+
+/* ===== 概念区 ===== */
+.concept { padding: 72px 0 64px; }
+.concept .container { max-width: 880px; }
+.concept-kicker { font-size: 13px; color: var(--accent); letter-spacing: .08em; margin-bottom: 12px; font-weight: 600; }
+.concept h2 { font-size: 26px; font-weight: 700; line-height: 1.3; margin-bottom: 16px; }
+.concept p { color: var(--text-secondary); font-size: 15px; margin-bottom: 14px; }
+.concept p b { color: var(--text-primary); font-weight: 600; }
+.flow {
+  margin: 28px 0 8px; padding: 24px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.flow-title { font-size: 14px; color: var(--text-muted); margin-bottom: 18px; text-align: center; }
+.flow-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.flow-node {
+  background: var(--bg-primary); border: 1px solid var(--border-light);
+  border-radius: var(--radius); padding: 12px 18px; text-align: center; min-width: 130px;
+}
+.flow-node .fn-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.flow-node .fn-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.flow-node.hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim); }
+.flow-node.hot .fn-name { color: var(--accent); }
+.flow-arrow { color: var(--text-muted); font-size: 18px; flex-shrink: 0; }
+
+/* 双锚卡片 */
+.twin { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 24px; }
+.twin-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px;
+}
+.twin-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.twin-card .t-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.twin-card .t-icon.a { background: var(--accent-dim); color: var(--accent); }
+.twin-card .t-icon.b { background: var(--success-dim); color: var(--success); }
+.twin-card p { font-size: 14px; color: var(--text-secondary); }
+.twin-card ul { list-style: none; margin-top: 12px; }
+.twin-card ul li { font-size: 13px; color: var(--text-secondary); padding: 4px 0 4px 20px; position: relative; }
+.twin-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--success); }
+
+/* ===== 存证对比 ===== */
+.compare { padding: 72px 0 80px; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-header .kicker { font-size: 13px; color: var(--accent); letter-spacing: .08em; font-weight: 600; margin-bottom: 10px; }
+.section-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
+.section-header p { color: var(--text-secondary); max-width: 640px; margin: 0 auto; }
+
+.compare-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.compare-table { width: 100%; border-collapse: collapse; table-layout: fixed; background: var(--bg-card); }
+.compare-table col.c1 { width: 18%; }
+.compare-table col.c2 { width: 28%; }
+.compare-table col.c3 { width: 27%; }
+.compare-table col.c4 { width: 27%; }
+.compare-table th, .compare-table td {
+  padding: 13px 14px; text-align: left; vertical-align: top;
+  font-size: 13.5px; line-height: 1.6; border-bottom: 1px solid var(--border);
+}
+.compare-table thead th {
+  color: var(--text-primary); font-weight: 600; font-size: 13px;
+  background: var(--bg-secondary);
+}
+.compare-table thead th .th-sub { display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px; }
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.compare-table td.name { color: var(--text-primary); font-weight: 600; font-family: var(--font-mono); font-size: 12.5px; }
+.compare-table td .cell-t { color: var(--text-secondary); }
+.compare-table td .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-bottom: 5px; }
+.badge.bad { background: var(--danger-dim); color: var(--danger); }
+.badge.good { background: var(--success-dim); color: var(--success); }
+.badge.mid { background: var(--warning-dim); color: var(--warning); }
+.compare-table td.hot-col { background: rgba(0, 212, 255, 0.05); }
+.compare-table td.hot-col .cell-t b { color: var(--accent); }
+
+/* ===== 价值场景 ===== */
+.scenes { padding: 72px 0 80px; }
+.scenes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.scene-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 30px 26px;
+  display: flex; flex-direction: column; transition: all .3s;
+}
+.scene-card:hover { border-color: var(--border-light); transform: translateY(-3px); }
+.scene-icon {
+  width: 46px; height: 46px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+}
+.scene-icon.i1 { background: var(--accent-dim); color: var(--accent); }
+.scene-icon.i2 { background: var(--warning-dim); color: var(--warning); }
+.scene-icon.i3 { background: var(--success-dim); color: var(--success); }
+.scene-icon.i4 { background: var(--danger-dim); color: var(--danger); }
+.scene-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.scene-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.75; }
+.scene-card .use-case { margin-top: 16px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--text-secondary); }
+.scene-card .use-case b { color: var(--text-primary); }
+
+/* ===== 意义区 ===== */
+.meaning { padding: 80px 0; }
+.meaning .container { max-width: 880px; }
+.meaning .quote {
+  text-align: center; padding: 40px 32px;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  margin-bottom: 40px;
+}
+.meaning .quote blockquote {
+  font-size: 21px; font-weight: 600; line-height: 1.5;
+  color: var(--text-primary); margin: 0 0 16px;
+}
+.meaning .quote blockquote .hl {
+  background: linear-gradient(135deg, var(--accent), #7C3AED);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.meaning .quote .sub { font-size: 14px; color: var(--text-secondary); }
+
+.meaning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 36px; }
+.meaning-item {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px;
+}
+.meaning-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--accent); }
+.meaning-item p { font-size: 13.5px; color: var(--text-secondary); }
+
+.cta-box {
+  text-align: center; padding: 34px;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.cta-box h4 { font-size: 18px; margin-bottom: 10px; color: var(--text-primary); }
+.cta-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #0B1120; text-decoration: none;
+  padding: 12px 26px; border-radius: 8px; font-size: 15px; font-weight: 700;
+  transition: all .2s;
+}
+.cta-btn:hover { background: #3ADFFF; transform: translateY(-1px); }
+
+/* ===== Footer ===== */
+.footer { padding: 40px 0 52px; border-top: 1px solid var(--border); text-align: center; }
+.footer p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+.footer .f-links { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+.footer .f-links a { color: var(--text-secondary); text-decoration: none; font-size: 13px; transition: color .2s; }
+.footer .f-links a:hover { color: var(--accent); }
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  color: var(--text-primary); padding: 12px 24px; border-radius: var(--radius);
+  font-size: 14px; z-index: 200; transition: transform .3s;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== 响应式 ===== */
+@media (max-width: 900px) {
+  .twin, .meaning-grid { grid-template-columns: 1fr 1fr; }
+  .scenes-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-inner { height: auto; padding: 12px 16px; flex-wrap: wrap; gap: 6px; }
+  .nav-links { display: flex; gap: 2px; flex-wrap: wrap; }
+  .nav-links a { padding: 6px 10px; font-size: 13px; }
+  .hero { padding: 100px 0 56px; }
+  .twin { grid-template-columns: 1fr; }
+  .scenes-grid { grid-template-columns: 1fr; }
+  .meaning-grid { grid-template-columns: 1fr; }
+  .flow-row { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .meaning .quote blockquote { font-size: 18px; }
+  .compare-table { min-width: 560px; }
+}
+.in-frame .navbar{display:none!important}
+.in-frame .hero{padding-top:70px!important}
+</style>
+<script>(function(){if(window.self!==window.top){document.documentElement.classList.add('in-frame');}})();</script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="存证必要性.html" class="nav-logo">
+      
+      首页 · 存证科普
+    </a>
+    <ul class="nav-links">
+      <li><a href="存证必要性.html" class="active">首页</a></li>
+      <li><a href="双锚时间戳存证服务.html">存证服务</a></li>
+      <li><a href="电子存证渠道清单.html">渠道清单</a></li>
+      <li><a href="公益支持说明.html">公益支持</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-badge">双锚时间戳的作用</div>
+    <h1>给文件盖上<br>谁也不能改的<span class="hl">时间章</span></h1>
+    <p class="lead">时间戳是给“内容 + 时间”做的可信标记；存证是把“某时刻我已拥有某内容”固定成可验证的证据。两者结合，任何人都无法事后伪造你文件的产生时间。</p>
+    <div class="proposition">
+      <strong>本站做什么：</strong>你的文件在本地算出唯一指纹（SHA-256 哈希），同时交给<strong>权威时间戳机构（TSA）数字签名</strong>和<strong>公共区块链锚定</strong>两条独立链路固定时间——不接触原始内容，凭证公开可核验，全程免费。
+    </div>
+  </div>
+</section>
+
+<!-- ===== 一、什么是时间戳 ===== -->
+<section class="concept" id="timestamp">
+  <div class="container">
+    <div class="concept-kicker">先搞清概念 01</div>
+    <h2>什么是时间戳？</h2>
+    <p>时间戳回答一个问题：<b>"这份内容，不晚于某个时刻就已经存在了"</b>。它由三部分组成：</p>
+    <div class="flow">
+      <div class="flow-title">时间戳是怎么做出来的（以本服务为例）</div>
+      <div class="flow-row">
+        <div class="flow-node"><div class="fn-name">文件指纹</div><div class="fn-sub">SHA-256 哈希，内容变一点结果全变</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node hot"><div class="fn-name">双链路盖章</div><div class="fn-sub">权威 TSA 签名 + 区块链锚定</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node"><div class="fn-name">存证凭证</div><div class="fn-sub">时间戳令牌 + 链上记录 + 证书</div></div>
+      </div>
+    </div>
+    <p><b>指纹（哈希）是关键</b>：任何文件都能算出固定长度的数字串，内容改一个字节，指纹就完全不同。所以"固定指纹 + 固定时间"就等于"固定这份内容 + 固定这个时刻"——这也是全程不需要上传原文件的原因。</p>
+
+    <div class="twin">
+      <div class="twin-card">
+        <h3>权威时间戳（RFC 3161）</h3>
+        <p>由合规的时间戳机构（TSA）用数字证书对"指纹 + 时间"签名，符合国际标准。它的权威来自签发机构，在司法场景认可度高。</p>
+        <ul>
+          <li>标准 X.509 证书签名，可验证真伪</li>
+          <li>防抵赖：签名者无法否认签过</li>
+          <li>适合需要权威背书的场景</li>
+        </ul>
+      </div>
+      <div class="twin-card">
+        <h3>区块链锚定（OpenTimestamps）</h3>
+        <p>把指纹提交到公共区块链（如比特币），用去中心化共识固定时间。不依赖任何单一机构，全球任何人可独立核验。</p>
+        <ul>
+          <li>去中心化：无单点信任、无单点故障</li>
+          <li>抗篡改：链上记录几乎无法改写</li>
+          <li>适合长期存证与公开核验</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:18px;"><b>双锚 = 两条独立链路对同一指纹同时盖章</b>：一条讲权威、一条讲去中心化，交叉印证，比单条链路更稳。</p>
+  </div>
+</section>
+
+<!-- ===== 二、什么是存证 ===== -->
+<section class="compare" id="deposit">
+  <div class="container">
+    <div class="section-header">
+      <div class="kicker">概念 02</div>
+      <h2>什么是存证？为什么常见做法不可靠</h2>
+      <p>存证就是把"内容 + 时间 + 归属主张"固定成一份可验证的凭证。很多人以为截图、发邮箱就算留证了，其实都经不起验证。</p>
+    </div>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"></colgroup>
+        <thead>
+          <tr>
+            <th>方式</th>
+            <th>能证明什么</th>
+            <th>致命弱点</th>
+            <th>适合场景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">截图 / 录屏</td>
+            <td class="cell-t">"我当时看到过这个画面"</td>
+            <td class="cell-t"><span class="badge bad">不可验证</span>可被 PS、时间可改、无第三方背书，几乎无证明力</td>
+            <td class="cell-t">日常备忘，不作证据</td>
+          </tr>
+          <tr>
+            <td class="name">发邮箱 / 云盘</td>
+            <td class="cell-t">"文件在某平台存在"</td>
+            <td class="cell-t"><span class="badge mid">依赖平台</span>时间由服务商记录，可被质疑；平台倒闭或删档即失效</td>
+            <td class="cell-t">传递文件，不固定时间</td>
+          </tr>
+          <tr>
+            <td class="name">公证处公证</td>
+            <td class="cell-t">"内容 + 时间经公证确认"</td>
+            <td class="cell-t"><span class="badge mid">重且贵</span>需要到场、付费、耗时，只适合诉讼末端</td>
+            <td class="cell-t">打官司、重大交易</td>
+          </tr>
+          <tr>
+            <td class="name hot-col">哈希双锚存证</td>
+            <td class="cell-t hot-col"><b>"不晚于某时刻已存在"</b>，任何人可核验</td>
+            <td class="cell-t hot-col"><span class="badge good">独立可验证</span>只存哈希不碰原文；双链路盖章；公开核验不依赖本站</td>
+            <td class="cell-t hot-col"><b>日常随手固定</b>：创作、方案、合同、数据</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 三、存证的价值 ===== -->
+<section class="scenes" id="value">
+  <div class="container">
+    <div class="section-header">
+      <div class="kicker">价值</div>
+      <h2>存证能帮你解决什么实际问题</h2>
+      <p>花几秒钟固定一个哈希，换的是将来随时拿得出、说得清的时间证据。</p>
+    </div>
+
+    <div class="scenes-grid">
+      <div class="scene-card">
+        
+        <h3>防抢注 · 防抄袭</h3>
+        <p>创意、文案、方案、代码、设计稿，先固定时间再发出去。真被人抢先发布或抄袭，"我早就有了"这句话从此有证据支撑，而不只是口头主张。</p>
+        <div class="use-case"><b>典型场景：</b>自媒体发文前存稿、开发者提交想法、商务方案外发前留证</div>
+      </div>
+
+      <div class="scene-card">
+        
+        <h3>版本与过程留痕</h3>
+        <p>合同改了几版、方案定稿是哪一版、数据在哪个时点是什么样——每一版都存一个哈希，形成完整时间线，事后对照版本、厘清责任不再靠回忆。</p>
+        <div class="use-case"><b>典型场景：</b>合同多轮修改、项目里程碑、审计留痕、数据导出时点</div>
+      </div>
+
+      <div class="scene-card">
+        
+        <h3>谈判与维权的底气</h3>
+        <p>证据先握在自己手里，对方知道你有时间证明，就愿意认真谈。真要走到诉讼，这份凭证能作为电子证据提交，也省去临时取证的麻烦与成本。</p>
+        <div class="use-case"><b>典型场景：</b>稿费/版权争议、合作纠纷、离职交接、催款对账</div>
+      </div>
+
+      <div class="scene-card">
+        
+        <h3>合规与内控留痕</h3>
+        <p>企业日志、制度发布、供应链单据、数据对账——定期锚定一批哈希，形成可审计的证据链，监管问询或内部核查时随时可出示。</p>
+        <div class="use-case"><b>典型场景：</b>制度发布时间、数据报表快照、进销存单据、离职交接</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 四、存证的意义 ===== -->
+<section class="meaning" id="meaning">
+  <div class="container">
+    <div class="quote">
+      <blockquote>存证的意义，不只是为打官司<br>而是让<span class="hl">事实有据可查</span>成为一种日常能力</blockquote>
+      <p class="sub">司法采信只是下游的一个出口。在此之前，存证先让"先占权、过程记录、事实档案"在每一天都成立。</p>
+    </div>
+
+    <div class="meaning-grid">
+      <div class="meaning-item">
+        <h4>对个人 · 时间主权</h4>
+        <p>灵感、创作、约定，发生时就能固定，不再担心说不清、被篡改、被抢先。这是最低成本的自我保护。</p>
+      </div>
+      <div class="meaning-item">
+        <h4>对创作者与开发者 · 先占权</h4>
+        <p>先发布不代表先拥有；先固定才代表先拥有。存证让"我先有的"可证明，谈判与维权从被动变主动。</p>
+      </div>
+      <div class="meaning-item">
+        <h4>对企业 · 事实管理</h4>
+        <p>把存证从诉讼工具变成日常事实管理：留痕、审计、溯源、对账，一套随时可查的证据体系。</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h4>现在就可以免费固定一份时间证据</h4>
+      <p>打开在线工具，选文件或粘贴内容，几十秒拿到可核验的双锚存证凭证。</p>
+      <a class="cta-btn" href="双锚时间戳存证服务.html">进入在线存证工具 →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="f-links">
+      <a href="存证必要性.html">首页</a>
+      <a href="双锚时间戳存证服务.html">存证服务</a>
+      <a href="电子存证渠道清单.html">渠道清单</a>
+      <a href="公益支持说明.html">公益支持</a>
+    </div>
+    <p>双锚时间戳存证 · 让每个人拥有对自己事实的时间主权 · 效力表述以司法机关认定为准</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// 全站导航为静态站内链接，无需滚动高亮
+</script>
+</body>
+</html>

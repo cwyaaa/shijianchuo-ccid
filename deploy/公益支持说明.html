@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>公益支持 · 收款说明</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231F2A44'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23B08D3E' stroke-width='3'/%3E%3Cpath d='M32 32 L44 20' stroke='%23F6F7F9' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='3' fill='%23F6F7F9'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --ink:#1F2A44;
+    --ink-soft:#3A4560;
+    --accent:#9A7B2D;
+    --accent-soft:#B08D3E;
+    --paper:#F6F7F9;
+    --card:#FFFFFF;
+    --line:#E1E4EB;
+    --muted:#5A6472;
+    --ok:#2E7D5B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:0 20px;}
+  .serif{
+    font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif;
+  }
+
+  /* ===== 顶部标识 ===== */
+  .topbar{
+    border-top:5px solid var(--accent-soft);
+    background:var(--ink);
+    color:#fff;
+  }
+  .topbar-inner{
+    max-width:840px;margin:0 auto;padding:14px 20px;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  }
+  .brand-mark{flex:none;width:34px;height:34px;}
+  .brand-name{font-size:15px;font-weight:600;letter-spacing:.5px;}
+  .brand-name small{display:block;font-weight:400;font-size:11px;color:#C9D0DE;letter-spacing:1.5px;}
+  .site-nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;}
+  .site-nav a{color:#C9D0DE;text-decoration:none;font-size:13px;padding:7px 12px;border-radius:4px;transition:background .15s,color .15s;}
+  .site-nav a:hover,.site-nav a.active{color:#fff;background:rgba(255,255,255,.08);}
+  @media(max-width:640px){
+    .site-nav{width:100%;margin-left:0;justify-content:flex-start;}
+  }
+
+  /* ===== 页头 ===== */
+  header.hero{padding:46px 20px 34px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:2px;color:var(--accent);
+    font-weight:600;
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--accent);}
+  h1{
+    font-size:30px;line-height:1.3;font-weight:700;letter-spacing:.5px;
+    margin:16px 0 14px;
+  }
+  .hero-intro{color:var(--ink-soft);max-width:60ch;font-size:15px;}
+  .hero-intro b{color:var(--ink);}
+
+  /* ===== 区块通用 ===== */
+  section.block{padding:34px 20px;}
+  section.block + section.block{border-top:1px solid var(--line);}
+  .num-head{
+    display:flex;align-items:baseline;gap:12px;margin-bottom:20px;
+  }
+  .num{
+    flex:none;width:34px;height:34px;border-radius:50%;
+    background:var(--ink);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;font-family:Georgia,"Times New Roman",serif;
+  }
+  h2{font-size:20px;font-weight:700;letter-spacing:.3px;}
+  h2 .cn{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:1px;margin-top:2px;}
+
+  /* ===== 服务说明 ===== */
+  .service-box{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent-soft);
+    border-radius:4px;padding:18px 20px;
+  }
+  .service-box p{font-size:14px;color:var(--ink-soft);}
+  .service-box p b{color:var(--ink);}
+  .service-line{padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .service-line:first-of-type{border-top:1px dashed var(--line);margin-top:12px;}
+  .service-line:last-of-type{border-bottom:none;}
+  .service-line b{color:var(--ink);}
+  .service-line span{color:var(--ink-soft);}
+
+  /* ===== 付款 ===== */
+  .pay-guide{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent-soft);
+    border-radius:4px;padding:14px 16px;margin-bottom:18px;
+    font-size:14px;color:var(--ink-soft);
+  }
+  .pay-guide b{color:var(--ink);}
+  .pay-card{
+    background:var(--card);border:1px solid var(--line);border-radius:6px;
+    border-top:4px solid var(--accent-soft);
+    display:flex;flex-direction:column;padding:20px;max-width:360px;margin:0 auto;
+  }
+  .pay-card-head{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+  .pay-card-head svg{flex:none;width:22px;height:22px;color:var(--accent);}
+  .pay-card-title{font-size:18px;font-weight:700;}
+  .pay-card-sub{color:var(--muted);font-size:13px;margin-bottom:14px;}
+  .pay-amount{
+    display:inline-block;background:#FCFBF7;border:1px solid var(--line);
+    border-radius:4px;padding:6px 14px;font-size:13px;color:var(--ink-soft);margin-bottom:14px;
+    align-self:flex-start;
+  }
+  .pay-amount b{font-family:Georgia,"Times New Roman",serif;font-size:20px;color:var(--accent);}
+  .qrcode-holder{
+    border:1.5px dashed var(--accent-soft);border-radius:6px;
+    background:#FCFBF7;padding:14px;text-align:center;margin-bottom:14px;
+  }
+  .qrcode-box{
+    aspect-ratio:1/1;width:100%;max-width:150px;margin:0 auto;
+    border:1px solid var(--line);background:#fff;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .qrcode-box img{width:100%;height:100%;object-fit:contain;display:block;}
+  .qrcode-tip{margin-top:10px;font-size:11.5px;color:var(--muted);line-height:1.6;}
+  .qrcode-tip b{color:var(--accent);}
+  .pay-note{font-size:13px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:12px;}
+  .pay-note b{color:var(--ink);}
+
+  /* ===== 重要说明 ===== */
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px;}
+  .disclaimer ul{list-style:none;}
+  .disclaimer li{
+    position:relative;padding:0 0 12px 26px;color:var(--ink-soft);font-size:14px;
+  }
+  .disclaimer li:last-child{padding-bottom:0;}
+  .disclaimer li::before{
+    content:"";position:absolute;left:2px;top:9px;width:8px;height:8px;
+    background:var(--accent-soft);transform:rotate(45deg);
+  }
+  .disclaimer li b{color:var(--ink);}
+
+  /* ===== 联系 ===== */
+  .contact{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;}
+  .contact-info{font-size:15px;color:var(--ink-soft);}
+  .contact-info .row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .contact-info .label{color:var(--muted);font-size:13px;min-width:70px;}
+  .contact-info .val{font-weight:600;color:var(--ink);font-family:Georgia,"Times New Roman",serif;letter-spacing:.5px;}
+  .copy-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--ink);color:#fff;border:none;border-radius:4px;
+    padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;
+    transition:background .15s ease,transform .05s ease;
+  }
+  .copy-btn:hover{background:#2C3A5C;}
+  .copy-btn:active{transform:translateY(1px);}
+  .copy-btn svg{width:15px;height:15px;}
+  .copy-btn.copied{background:var(--ok);}
+
+  footer{padding:28px 20px 44px;border-top:1px solid var(--line);}
+  .footer-inner{max-width:840px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;align-items:center;color:var(--muted);font-size:12.5px;}
+  .footer-inner .sep{color:var(--line);}
+
+  @media(max-width:480px){
+    h1{font-size:25px;}
+    header.hero{padding:36px 20px 26px;}
+  }
+.in-frame .topbar{display:none!important}
+</style>
+<script>(function(){if(window.self!==window.top){document.documentElement.classList.add('in-frame');}})();</script>
+</head>
+<body>
+
+<!-- ===== 顶部标识 ===== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    
+    <div class="brand-name">
+      双锚时间戳存证
+      <small>RFC3161 · OPEN TIMESTAMPS</small>
+    </div>
+    <nav class="site-nav">
+      <a href="存证必要性.html">首页</a>
+      <a href="双锚时间戳存证服务.html">存证服务</a>
+      <a href="电子存证渠道清单.html">渠道清单</a>
+      <a href="公益支持说明.html" class="active">公益支持</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ===== 页头 ===== -->
+<header class="hero wrap">
+  <span class="eyebrow">做服务 · 做功能普及</span>
+  <h1 class="serif">公益支持 · 收款说明</h1>
+  <p class="hero-intro">本站存证功能<b>全部免费开放</b>，打赏让网站继续运转。</p>
+</header>
+
+<!-- ===== 一、公益支持说明 ===== -->
+<section class="block wrap">
+  <div class="num-head"><span class="num">1</span><h2>公益支持说明<span class="cn">SERVICE &amp; SUPPORT</span></h2></div>
+  <div class="service-box">
+    <p>关于免费存证，几点实用说明：</p>
+    <div class="service-line"><b>存证流程</b><span>：提交文件，自动完成时间戳与区块链双锚，获取存证凭证，全程免费</span></div>
+    <div class="service-line"><b>隐私友好</b><span>：只处理文件哈希，不上传原文，凭证可随时独立核验</span></div>
+    <div class="service-line"><b>打赏随心</b><span>：金额不限，一次或每月支持都可以</span></div>
+  </div>
+</section>
+
+<!-- ===== 二、付款方式 ===== -->
+<section class="block wrap">
+  <div class="num-head"><span class="num">2</span><h2>付款方式<span class="cn">HOW TO PAY</span></h2></div>
+  <div class="pay-guide">打开支付宝「扫一扫」即可支持。<b>金额随你心意</b>，备注「公益支持」就好。</div>
+
+  <div class="pay-card">
+    <div class="pay-card-head">
+      
+      <span class="pay-card-title">公益付款</span>
+    </div>
+    <div class="pay-card-sub">自愿支持，助力为有需要的人提供免费存证</div>
+    <div class="pay-amount">金额 <b>自愿</b></div>
+    <div class="qrcode-holder">
+      <div class="qrcode-box">
+        <img src="assets/收款码-支付宝-clean.png" alt="支付宝收款码">
+      </div>
+      <p class="qrcode-tip"><b>支付宝收款码</b><br>扫码后备注「公益支持」</p>
+    </div>
+    <div class="pay-note">付款备注请填写<b>「公益支持」</b>。</div>
+  </div>
+
+</section>
+
+<!-- ===== 三、重要说明 ===== -->
+<section class="block wrap">
+  <div class="num-head"><span class="num">3</span><h2>重要说明<span class="cn">IMPORTANT NOTES</span></h2></div>
+  <div class="disclaimer">
+    <ul>
+      <li>打赏为<b>自愿支持</b>，不构成购买服务，也不承诺任何功能或权益回报。</li>
+      <li>存证凭证用于证明对应文件<b>不晚于存证时间存在</b>；<b>不自动等同于司法采信证据</b>，最终效力由司法机关综合判定。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 四、联系我们 ===== -->
+<section class="block wrap">
+  <div class="num-head"><span class="num">4</span><h2>联系我们<span class="cn">CONTACT</span></h2></div>
+  <div class="contact">
+    <div class="contact-info">
+      <div class="row"><span class="label">客服微信</span><span class="val" id="wx-value">【微信号】</span></div>
+      <div class="row"><span class="label">工作时间</span><span>周一至周日 9:00 - 21:00</span></div>
+    </div>
+    <button class="copy-btn" id="copy-btn" type="button">
+      
+      复制微信号
+    </button>
+  </div>
+</section>
+
+<!-- ===== 页脚 ===== -->
+<footer>
+  <div class="footer-inner">
+    <span>双锚时间戳存证 · 试运营版本 V1.1</span>
+    <span><span class="sep">|</span> 服务规则详见《时间戳服务公开声明》</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var copyBtn = document.getElementById('copy-btn');
+    var wxVal = document.getElementById('wx-value');
+    if(copyBtn && wxVal){
+      copyBtn.addEventListener('click', function(){
+        var text = wxVal.textContent.replace(/【|】/g,'').trim();
+        if(!text || text.indexOf('微信号') > -1){
+          toast('请先在页面上填写你的微信号');
+          return;
+        }
+        function fallback(){
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); }catch(e){}
+          document.body.removeChild(ta);
+          done();
+        }
+        function done(){
+          copyBtn.classList.add('copied');
+          var old = copyBtn.innerHTML;
+          copyBtn.innerHTML = ' 已复制';
+          setTimeout(function(){ copyBtn.classList.remove('copied'); copyBtn.innerHTML = old; }, 1800);
+        }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(done).catch(fallback);
+        } else {
+          fallback();
+        }
+      });
+    }
+    function toast(msg){
+      var t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:#1F2A44;color:#fff;padding:10px 18px;border-radius:4px;font-size:14px;z-index:99;box-shadow:0 4px 16px rgba(0,0,0,.18);';
+      document.body.appendChild(t);
+      setTimeout(function(){ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); }, 1800);
+    }
+  })();
+</script>
+
+</body>
+</html>

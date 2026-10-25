@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>双锚时间戳存证服务 | RFC3161 + OpenTimestamps</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='6' fill='%2300D4FF'/><path d='M8 14l4 4 8-8' stroke='%230B1120' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<style>
+/* ===== 基础重置与变量 ===== */
+:root {
+  --bg-primary: #0B1120;
+  --bg-secondary: #131B2E;
+  --bg-card: #1A2438;
+  --bg-card-hover: #1F2B42;
+  --border: #2A3A5C;
+  --border-light: #3A4E75;
+  --accent: #00D4FF;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --success: #10B981;
+  --success-dim: rgba(16, 185, 129, 0.12);
+  --warning: #F59E0B;
+  --warning-dim: rgba(245, 158, 11, 0.12);
+  --danger: #EF4444;
+  --text-primary: #E8EDF5;
+  --text-secondary: #8A9BB8;
+  --text-muted: #5A6B88;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ===== 全站导航 ===== */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; color: var(--text-primary); text-decoration: none; white-space: nowrap; }
+.nav-logo .logo-tag { font-size: 11px; color: var(--text-muted); letter-spacing: .08em; font-family: var(--font-mono); }
+.nav-links { display: flex; gap: 4px; list-style: none; align-items: center; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 13px; border-radius: 6px; font-size: 14px; transition: all .2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--accent); background: var(--accent-dim); }
+.nav-toggle {
+  display: none; background: none; border: 1px solid var(--border); border-radius: 6px;
+  width: 40px; height: 40px; color: var(--text-secondary); cursor: pointer;
+  align-items: center; justify-content: center;
+}
+
+/* ===== Hero 区 ===== */
+.hero { padding: 150px 0 80px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%); pointer-events: none; }
+.hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--accent-dim); border: 1px solid rgba(0, 212, 255, 0.25); border-radius: 100px; font-size: 13px; color: var(--accent); margin-bottom: 24px; position: relative; z-index: 1; }
+.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.hero h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; line-height: 1.2; margin-bottom: 20px; position: relative; z-index: 1; letter-spacing: -0.02em; }
+.hero h1 .highlight { background: linear-gradient(135deg, var(--accent), #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero p.subtitle { font-size: 17px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 36px; position: relative; z-index: 1; }
+.hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+
+/* ===== 按钮 ===== */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: var(--radius); font-size: 15px; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s; font-family: var(--font-sans); }
+.btn-primary { background: var(--accent); color: #0B1120; }
+.btn-primary:hover { background: #33DDFF; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3); }
+.btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-light); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* ===== 统计数据条 ===== */
+.hero-stats { display: flex; justify-content: center; gap: 48px; margin-top: 56px; flex-wrap: wrap; position: relative; z-index: 1; }
+.stat-item { text-align: center; }
+.stat-value { font-size: 28px; font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); }
+.stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* ===== 区块通用 ===== */
+section { padding: 80px 0; }
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-header h2 { font-size: 28px; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.01em; }
+.section-header p { color: var(--text-secondary); max-width: 560px; margin: 0 auto; }
+
+/* ===== 双锚原理区 ===== */
+.anchors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; max-width: 900px; margin: 0 auto; }
+.anchor-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; transition: all 0.3s; }
+.anchor-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+.anchor-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.anchor-icon.tsa { background: var(--accent-dim); }
+.anchor-icon.ots { background: var(--success-dim); }
+.anchor-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.anchor-card .tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 4px; margin-bottom: 16px; font-family: var(--font-mono); }
+.tag-tsa { background: var(--accent-dim); color: var(--accent); }
+.tag-ots { background: var(--success-dim); color: var(--success); }
+.anchor-card p { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
+.anchor-card ul { list-style: none; font-size: 13px; color: var(--text-muted); }
+.anchor-card ul li { padding: 4px 0; padding-left: 20px; position: relative; }
+.anchor-card ul li::before { content: '✓'; position: absolute; left: 0; color: var(--success); }
+.anchor-connector { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 24px; font-weight: 300; }
+
+/* ===== 工具区 ===== */
+.tools-section { background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.tools-tabs { display: flex; justify-content: center; gap: 4px; margin-bottom: 36px; background: var(--bg-card); padding: 4px; border-radius: 100px; width: fit-content; margin-left: auto; margin-right: auto; }
+.tool-tab { padding: 10px 24px; border-radius: 100px; border: none; background: transparent; color: var(--text-secondary); font-size: 14px; cursor: pointer; transition: all 0.2s; font-family: var(--font-sans); }
+.tool-tab.active { background: var(--accent); color: #0B1120; font-weight: 500; }
+.tool-panel { display: none; max-width: 720px; margin: 0 auto; }
+.tool-panel.active { display: block; }
+.tool-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; }
+.tool-card h3 { font-size: 18px; margin-bottom: 8px; }
+.tool-card .desc { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+
+/* ===== 上传区 ===== */
+.dropzone { border: 2px dashed var(--border-light); border-radius: var(--radius); padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+.dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: var(--accent-dim); }
+.dropzone svg { margin-bottom: 12px; color: var(--text-muted); }
+.dropzone p { color: var(--text-secondary); font-size: 14px; }
+.dropzone .highlight-text { color: var(--accent); }
+
+/* ===== 哈希显示 ===== */
+.hash-result { background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; display: none; }
+.hash-result.visible { display: block; }
+.hash-result .label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.hash-result .hash-value { font-family: var(--font-mono); font-size: 13px; color: var(--accent); word-break: break-all; line-height: 1.5; }
+.file-info { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-primary); border-radius: var(--radius); margin-bottom: 16px; display: none; }
+.file-info.visible { display: flex; }
+.file-info .file-icon { width: 36px; height: 36px; background: var(--accent-dim); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.file-info .file-meta { flex: 1; min-width: 0; }
+.file-info .file-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-info .file-size { font-size: 12px; color: var(--text-muted); }
+
+/* ===== 存证结果 ===== */
+.certificate { background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary)); border: 1px solid var(--success); border-radius: var(--radius-lg); padding: 24px; margin-top: 20px; display: none; }
+.certificate.visible { display: block; }
+.certificate-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.certificate-header .check-icon { width: 32px; height: 32px; background: var(--success-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--success); }
+.certificate-header h4 { font-size: 16px; color: var(--success); }
+.cert-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid rgba(42, 58, 92, 0.5); }
+.cert-row:last-child { border-bottom: none; }
+.cert-row .key { color: var(--text-muted); }
+.cert-row .val { color: var(--text-primary); font-family: var(--font-mono); font-size: 12px; text-align: right; max-width: 60%; word-break: break-all; }
+
+/* ===== 核验表单 ===== */
+.verify-form .form-group { margin-bottom: 20px; }
+.verify-form label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.verify-form input { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 16px; font-family: var(--font-mono); transition: border-color 0.2s; }
+.verify-form input:focus { outline: none; border-color: var(--accent); }
+.verify-form input::placeholder { color: var(--text-muted); }
+
+/* ===== 一键存证：场景选择 ===== */
+.scene-select { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.scene-option { flex: 1 1 90px; min-width: 90px; padding: 12px 8px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); text-align: center; cursor: pointer; transition: all 0.2s; color: var(--text-secondary); }
+.scene-option .scene-icon { display: block; margin: 0 auto 6px; }
+.scene-option .scene-label { font-size: 13px; font-weight: 500; }
+.scene-option:hover { border-color: var(--border-light); color: var(--text-primary); }
+.scene-option.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.scene-panel { display: none; }
+.scene-panel.active { display: block; }
+.scene-input-group { margin-bottom: 16px; }
+.scene-input-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.scene-input-group textarea, .scene-input-group input[type="text"], .scene-input-group input[type="url"] { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 16px; font-family: var(--font-mono); transition: border-color 0.2s; resize: vertical; box-sizing: border-box; }
+.scene-input-group textarea:focus, .scene-input-group input:focus { outline: none; border-color: var(--accent); }
+.scene-input-group textarea::placeholder, .scene-input-group input::placeholder { color: var(--text-muted); font-family: var(--font-sans); }
+
+/* ===== 双锚网关（真实服务连接） ===== */
+.gateway-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 18px; padding: 12px 14px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); }
+.gateway-row label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+.gateway-row input[type="url"] { flex: 1 1 240px; min-width: 0; padding: 10px 14px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 14px; font-family: var(--font-mono); }
+.gateway-row input[type="url"]:focus { outline: none; border-color: var(--accent); }
+.gateway-status { font-size: 13px; margin: 0 0 18px; }
+.gateway-status.ok { color: var(--success); }
+.gateway-status.err { color: #EF4444; }
+.gateway-status.wait { color: var(--text-muted); }
+
+/* ===== 双锚状态条 ===== */
+.anchor-strip { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 8px; }
+.anchor-step { flex: 1 1 120px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text-muted); background: var(--bg-primary); }
+.anchor-step .step-name { display: block; font-weight: 600; margin-bottom: 2px; }
+.anchor-step.active { border-color: var(--accent); color: var(--accent); }
+.anchor-step.done { border-color: var(--success); color: var(--success); }
+.status-pill { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.status-pill.pending { background: rgba(245,194,66,.15); color: #F5C242; }
+.status-pill.confirmed { background: var(--success-dim); color: var(--success); }
+.status-pill.demo { background: var(--accent-dim); color: var(--accent); }
+.ots-note { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.6; }
+.refresh-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+
+
+/* ===== 佐证包面板 ===== */
+.pkg-area { background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 20px; display: none; }
+.pkg-area.visible { display: block; }
+.pkg-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.pkg-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.pkg-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); padding: 8px 10px; background: var(--bg-secondary); border-radius: 6px; }
+.pkg-item .pkg-check { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pkg-item.done .pkg-check { background: var(--success-dim); color: var(--success); }
+.pkg-download { display: flex; gap: 10px; flex-wrap: wrap; }
+.pkg-download .btn { flex: 1; justify-content: center; }
+
+/* ===== 核验结果 ===== */
+.verify-result { margin-top: 24px; padding: 20px; border-radius: var(--radius); display: none; }
+.verify-result.visible { display: block; }
+.verify-result.success { background: var(--success-dim); border: 1px solid rgba(16, 185, 129, 0.3); }
+.verify-result.error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); }
+.verify-result .result-title { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 8px; }
+.verify-result.success .result-title { color: var(--success); }
+.verify-result.error .result-title { color: var(--danger); }
+.verify-result .result-detail { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.verify-result .result-detail .hash-inline { font-family: var(--font-mono); color: var(--text-primary); word-break: break-all; }
+
+/* ===== 声明摘要区 ===== */
+.declaration-section { background: var(--bg-secondary); border-top: 1px solid var(--border); }
+.declaration-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 900px; margin: 0 auto; }
+.declaration-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+.declaration-card h4 { font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.declaration-card h4 .icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+.icon-can { background: var(--success-dim); color: var(--success); }
+.icon-cant { background: var(--warning-dim); color: var(--warning); }
+.declaration-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.declaration-card p + p { margin-top: 8px; }
+
+/* ===== 服务矩阵区 ===== */
+.services-section { background: var(--bg-secondary); border-top: 1px solid var(--border); }
+.services-ladder { display: flex; flex-direction: column; gap: 20px; max-width: 900px; margin: 0 auto; }
+.service-tier { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 28px 24px; transition: all 0.3s; position: relative; }
+.service-tier:hover { border-color: var(--border-light); transform: translateY(-2px); }
+.service-tier .tier-top { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.service-tier .tier-index { font-family: var(--font-mono); font-size: 13px; color: var(--accent); letter-spacing: 0.05em; padding-top: 4px; flex-shrink: 0; }
+.service-tier .tier-head { flex: 1; min-width: 200px; }
+.service-tier .tier-head h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.service-tier .tier-pain { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.7; }
+.service-tier .tier-pain .pain-label { color: var(--warning); font-weight: 500; }
+.service-tier .tier-pain .pain-value { color: var(--text-primary); }
+.tier-badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 100px; white-space: nowrap; font-weight: 500; }
+.badge-free { background: var(--accent-dim); color: var(--accent); }
+.badge-low { background: var(--purple-dim, rgba(139, 92, 246, 0.15)); color: #A78BFA; }
+.badge-mid { background: var(--success-dim); color: var(--success); }
+.badge-high { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.service-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+.service-tier:first-of-type .service-item { grid-column: 1 / -1; }
+.service-item { background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.service-item .item-name { font-size: 14px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.service-item .item-name .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.service-item .item-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.service-item .item-value { font-size: 12px; color: var(--text-muted); margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(42, 58, 92, 0.4); }
+.service-item .item-value strong { color: var(--success); font-weight: 500; }
+.service-tier .tier-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.service-tier .tier-price { font-size: 13px; color: var(--text-secondary); }
+.service-tier .tier-price strong { color: var(--text-primary); font-family: var(--font-mono); font-size: 15px; }
+.effect-tag { font-size: 12px; padding: 4px 10px; border-radius: 4px; color: var(--text-secondary); border: 1px solid var(--border); }
+.effect-tag.level-a { color: var(--success); border-color: rgba(16, 185, 129, 0.4); }
+.effect-tag.level-b { color: #A78BFA; border-color: rgba(139, 92, 246, 0.4); }
+.effect-tag.level-c { color: var(--warning); border-color: rgba(245, 158, 11, 0.4); }
+.services-note { max-width: 900px; margin: 24px auto 0; padding: 20px 24px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+.services-note strong { color: var(--text-secondary); }
+.services-pay-link { text-align: center; margin-top: 22px; }
+.services-pay-link a { color: var(--accent); font-size: 14px; text-decoration: none; border-bottom: 1px dashed rgba(0,212,255,.4); padding-bottom: 2px; }
+.services-pay-link a:hover { color: #33DDFF; }
+
+/* ===== 全站 Footer ===== */
+.site-footer { padding: 40px 0 52px; border-top: 1px solid var(--border); }
+.site-footer .container { display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
+.footer-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+.footer-links { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+.footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--accent); }
+.site-footer p { font-size: 12.5px; color: var(--text-muted); }
+
+/* ===== Toast 提示 ===== */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-primary); padding: 12px 24px; border-radius: var(--radius); font-size: 14px; z-index: 200; transition: transform 0.3s; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== 加载状态 ===== */
+.loading { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; }
+  .nav-links { display: none; position: absolute; top: 60px; left: 0; right: 0; background: var(--bg-secondary); border-bottom: 1px solid var(--border); flex-direction: column; padding: 8px 16px; gap: 2px; align-items: stretch; }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 11px 12px; display: block; }
+  .hero { padding: 110px 0 60px; }
+  .hero-stats { gap: 24px; }
+  .anchors-grid { grid-template-columns: 1fr; }
+  .anchor-connector { transform: rotate(90deg); padding: 8px 0; }
+  .declaration-grid { grid-template-columns: 1fr; }
+  .tool-card { padding: 20px; }
+  .cert-row { flex-direction: column; gap: 4px; }
+  .cert-row .val { max-width: 100%; text-align: left; }
+  .service-list { grid-template-columns: 1fr; }
+  .pkg-list { grid-template-columns: 1fr; }
+}
+.in-frame .navbar{display:none!important}
+.in-frame .hero{padding-top:72px!important}
+</style>
+<script>(function(){if(window.self!==window.top){document.documentElement.classList.add('in-frame');}})();</script>
+</head>
+<body>
+
+<!-- ===== 全站导航 ===== -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="存证必要性.html" class="nav-logo">
+      
+      <span>双锚时间戳存证<em class="logo-tag" style="font-style:normal;display:block;font-size:10px;">RFC3161 · OPEN TIMESTAMPS</em></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="打开菜单">菜单</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="存证必要性.html">首页</a></li>
+      <li><a href="双锚时间戳存证服务.html" class="active">存证服务</a></li>
+      <li><a href="电子存证渠道清单.html">渠道清单</a></li>
+      <li><a href="公益支持说明.html">公益支持</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== Hero 区 ===== -->
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-badge"><span class="dot"></span>RFC 3161 + OpenTimestamps 双锚加固</div>
+    <h1>为你的数字文件<br><span class="highlight">提供可信时间证明</span></h1>
+    <p class="subtitle">基于 PKI 签名时间戳与区块链锚定的双重存证方案，仅需文件哈希即可完成时间固定，不接触原始内容，保护隐私。</p>
+    <div class="hero-ctas">
+      <a href="#tools" class="btn btn-primary">立即体验存证</a>
+      <a href="#anchors" class="btn btn-secondary">了解技术原理</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-value">2</div><div class="stat-label">独立锚定链路</div></div>
+      <div class="stat-item"><div class="stat-value">SHA-256</div><div class="stat-label">哈希算法</div></div>
+      <div class="stat-item"><div class="stat-value">0</div><div class="stat-label">原始文件上传</div></div>
+      <div class="stat-item"><div class="stat-value">公开</div><div class="stat-label">核验入口</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 双锚原理区 ===== -->
+<section id="anchors">
+  <div class="container">
+    <div class="section-header">
+      <h2>双重锚定，互为佐证</h2>
+      <p>两条独立技术路线同时锚定同一文件哈希，一条侧重司法认可度，一条侧重去中心化抗篡改，交叉验证提升证据可信度。</p>
+    </div>
+    <div class="anchors-grid">
+      <div class="anchor-card">
+        
+        <h3>RFC 3161 时间戳</h3>
+        <span class="tag tag-tsa">PKI 签名</span>
+        <p>由合规时间戳权威机构（TSA）签发带数字签名的时间令牌，符合国际标准规范，在司法场景中具备较高认可度。</p>
+        <ul>
+          <li>标准 X.509 证书签名</li>
+          <li>防抵赖、可审计</li>
+          <li>司法采信度较高</li>
+        </ul>
+      </div>
+      
+      <div class="anchor-card">
+        
+        <h3>OpenTimestamps 锚定</h3>
+        <span class="tag tag-ots">区块链证明</span>
+        <p>将文件哈希锚定至公共区块链，利用链上共识机制证明文件在特定时间点之前已存在，去中心化、无需信任单一机构。</p>
+        <ul>
+          <li>比特币/以太坊链上锚定</li>
+          <li>去中心化、抗审查</li>
+          <li>适合二次加固佐证</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 工具区 ===== -->
+<section class="tools-section" id="tools">
+  <div class="container">
+    <div class="section-header">
+      <h2>在线工具</h2>
+      <p>前端本地计算文件哈希，不接触原始内容；连接本地网关后，可调用真实 RFC3161 TSA 与 OpenTimestamps 服务完成双锚存证。</p>
+    </div>
+
+    <div class="tools-tabs">
+      <button class="tool-tab active" data-tab="stamp">申请存证</button>
+      <button class="tool-tab" data-tab="verify">核验存证</button>
+    </div>
+
+    <!-- 存证面板 -->
+    <div class="tool-panel active" id="panel-stamp">
+      <div class="tool-card">
+        <h3>一键存证</h3>
+        <p class="desc">选择你想存证的内容，其余交给系统——自动计算指纹、双锚时间戳、生成佐证包，随证书一起给你。</p>
+
+        <!-- 双锚网关（真实 TSA / OTS 服务） -->
+        <div class="gateway-row">
+          <label>双锚网关</label>
+          <input type="url" id="gatewayInput" value="http://127.0.0.1:8787" placeholder="http://127.0.0.1:8787">
+          <button class="btn btn-secondary" id="gatewayBtn" style="flex:0 0 auto;">测试连接</button>
+        </div>
+        <div class="gateway-status wait" id="gatewayStatus">未连接 · 当前为本地演示模式（启动 gateway.py 后点「测试连接」，开启真实 TSA / OTS 双锚）</div>
+
+        <!-- 场景选择 -->
+        <div class="scene-select">
+          <div class="scene-option active" data-scene="file">
+            
+            <span class="scene-label">文件</span>
+          </div>
+          <div class="scene-option" data-scene="text">
+            
+            <span class="scene-label">文本 / 代码</span>
+          </div>
+          <div class="scene-option" data-scene="web">
+            
+            <span class="scene-label">网页</span>
+          </div>
+          <div class="scene-option" data-scene="mail">
+            
+            <span class="scene-label">邮件</span>
+          </div>
+        </div>
+
+        <!-- 文件场景 -->
+        <div class="scene-panel active" id="scene-file">
+          <div class="dropzone" id="dropzone">
+            
+            <p><span class="highlight-text">点击选择文件</span> 或拖拽文件到此处</p>
+            <p style="font-size:12px;margin-top:8px;">支持任意文件类型 · 本地计算 · 不上传原始内容</p>
+          </div>
+          <input type="file" id="fileInput" style="display:none;">
+          <div class="file-info" id="fileInfo">
+            
+            <div class="file-meta">
+              <div class="file-name" id="fileName">未选择文件</div>
+              <div class="file-size" id="fileSize">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 文本场景 -->
+        <div class="scene-panel" id="scene-text">
+          <div class="scene-input-group">
+            <label>粘贴要存证的内容（文本、代码、方案、灵感）</label>
+            <textarea id="textContent" rows="6" placeholder="在这里粘贴你的文本、代码片段或方案内容……"></textarea>
+          </div>
+        </div>
+
+        <!-- 网页场景 -->
+        <div class="scene-panel" id="scene-web">
+          <div class="scene-input-group">
+            <label>输入要存证的网页地址</label>
+            <input type="url" id="webUrl" placeholder="https://example.com/page">
+          </div>
+          <div class="scene-input-group">
+            <label>网页内容摘要（可选，作为存证内容的一部分）</label>
+            <textarea id="webContent" rows="4" placeholder="粘贴网页关键内容或截图说明……"></textarea>
+          </div>
+        </div>
+
+        <!-- 邮件场景 -->
+        <div class="scene-panel" id="scene-mail">
+          <div class="scene-input-group">
+            <label>发件人 / 主题（存证信息）</label>
+            <input type="text" id="mailMeta" placeholder="例如：张三 &lt;zhangsan@example.com&gt; · 关于合作协议的确认">
+          </div>
+          <div class="scene-input-group">
+            <label>邮件正文内容</label>
+            <textarea id="mailContent" rows="5" placeholder="粘贴邮件正文……"></textarea>
+          </div>
+        </div>
+
+        <div class="hash-result" id="hashResult">
+          <div class="label">待存证内容指纹 (SHA-256)</div>
+          <div class="hash-value" id="hashValue">尚未计算</div>
+        </div>
+
+        <button class="btn btn-primary" id="stampBtn" disabled style="width:100%;justify-content:center;">
+          立即存证
+        </button>
+
+        <div class="certificate" id="certificate">
+          <div class="certificate-header">
+            
+            <h4 id="certTitle">存证已受理</h4>
+          </div>
+
+          <!-- 双锚异步状态条 -->
+          <div class="anchor-strip" id="anchorStrip">
+            <div class="anchor-step" id="stepLocal"><span class="step-name">① 本地指纹</span>SHA-256 已计算</div>
+            <div class="anchor-step" id="stepTsa"><span class="step-name">② TSA 签名</span>RFC3161</div>
+            <div class="anchor-step" id="stepOts"><span class="step-name">③ OTS 上链</span>待确认</div>
+          </div>
+          <div class="ots-note" id="otsNote">--</div>
+          <div class="refresh-row" id="refreshRow" style="display:none;">
+            <button class="btn btn-secondary" id="otsRefreshBtn" style="flex:0 0 auto;">刷新 OTS 链上状态</button>
+          </div>
+
+          <div class="cert-row"><span class="key">存证编号</span><span class="val" id="certId">--</span></div>
+          <div class="cert-row"><span class="key">存证时间</span><span class="val" id="certTime">--</span></div>
+          <div class="cert-row"><span class="key">内容指纹</span><span class="val" id="certHash">--</span></div>
+          <div class="cert-row"><span class="key">RFC3161 锚定</span><span class="val" id="certTsa">--</span></div>
+          <div class="cert-row"><span class="key">OTS 锚定</span><span class="val" id="certOts">--</span></div>
+          <div style="margin-top:16px;font-size:12px;color:var(--text-muted);line-height:1.7;">
+            存证时间自提交时已固定；OTS 链上确认完成后凭证升级为可公开核验。请妥善保存存证编号与原始内容。
+          </div>
+        </div>
+
+        <!-- 佐证包 -->
+        <div class="pkg-area" id="pkgArea">
+          <div class="pkg-title">
+            
+            防篡改佐证包已自动生成
+          </div>
+          <div class="pkg-list">
+            <div class="pkg-item done">多重指纹</div>
+            <div class="pkg-item done">双锚时间戳</div>
+            <div class="pkg-item done">数字签名</div>
+            <div class="pkg-item done">审计日志</div>
+            <div class="pkg-item done">见证哈希</div>
+            <div class="pkg-item done">基线固化</div>
+          </div>
+          <div class="pkg-download">
+            <button class="btn btn-secondary" id="pkgViewBtn">查看佐证包</button>
+            <button class="btn btn-primary" id="pkgDownloadBtn">下载佐证包 (.json)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 核验面板 -->
+    <div class="tool-panel" id="panel-verify">
+      <div class="tool-card">
+        <h3>存证核验</h3>
+        <p class="desc">输入存证编号与文件哈希，校验该存证是否存在、哈希是否匹配。</p>
+
+        <div class="verify-form">
+          <div class="form-group">
+            <label>存证编号</label>
+            <input type="text" id="verifyId" placeholder="例如：TS-20261025-XXXXXX">
+          </div>
+          <div class="form-group">
+            <label>文件 SHA-256 哈希</label>
+            <input type="text" id="verifyHash" placeholder="输入完整的 64 位哈希值">
+          </div>
+          <button class="btn btn-primary" id="verifyBtn" style="width:100%;justify-content:center;">
+            开始核验
+          </button>
+        </div>
+
+        <div class="verify-result" id="verifyResult">
+          <div class="result-title" id="verifyTitle">
+            
+            <span id="verifyTitleText">核验结果</span>
+          </div>
+          <div class="result-detail" id="verifyDetail"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 服务矩阵区 ===== -->
+<section id="services" class="services-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>存证服务矩阵</h2>
+      <p>从轻量时间戳到司法级出证，每种存证解决不同的痛点。按你的场景和需要的法律效力，选最合适的一档。</p>
+    </div>
+
+    <div class="services-ladder">
+
+      <!-- 第 0 层：普惠 -->
+      <div class="service-tier">
+        <div class="tier-top">
+          <div class="tier-index">TIER 0</div>
+          <div class="tier-head">
+            <h3>普惠时间戳 <span class="tier-badge badge-free">免费额度 · 引流款</span></h3>
+            <div class="tier-pain">
+              <span class="pain-label">痛点：</span><span class="pain-value">文件、灵感、方案的生成时间说不清，担心被抄袭、倒签，却拿不出证据。</span>
+            </div>
+          </div>
+        </div>
+        <div class="service-list">
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>文件哈希存证</div>
+            <div class="item-desc">本地计算文件 SHA-256 哈希，双锚固定存在时间，不接触原始内容。</div>
+            <div class="item-value">价值：<strong>技术佐证</strong>，证明「不晚于某时已存在」</div>
+          </div>
+        </div>
+        <div class="tier-foot">
+          <div class="tier-price"><strong>免费</strong> 基础额度 · 超出按量计费</div>
+          <span class="effect-tag level-a">效力：技术佐证 · 辅助证据</span>
+        </div>
+      </div>
+
+      <!-- 第 1 层：基础场景 -->
+      <div class="service-tier">
+        <div class="tier-top">
+          <div class="tier-index">TIER 1</div>
+          <div class="tier-head">
+            <h3>基础场景存证 <span class="tier-badge badge-low">按次 · 几元 ~ 几十元</span></h3>
+            <div class="tier-pain">
+              <span class="pain-label">痛点：</span><span class="pain-value">网页会删改、邮件可伪造、灵感被抄拿不出时间证据——普通截图和手动保存都不算数。</span>
+            </div>
+          </div>
+        </div>
+        <div class="service-list">
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>网页内容存证</div>
+            <div class="item-desc">自动抓取网页完整快照 + 哈希锚定，比手动截图更规范，可复核抓取过程。</div>
+            <div class="item-value">价值：<strong>完整快照可复核</strong>，胜过截图</div>
+          </div>
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>邮件存证</div>
+            <div class="item-desc">固定邮件原始头信息（Received 链）+ 内容哈希，收发时间有据可查。</div>
+            <div class="item-value">价值：<strong>原始头信息可信</strong>，防删防伪</div>
+          </div>
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>文本 / 代码片段存证</div>
+            <div class="item-desc">轻量输入框直接存文本哈希，灵感、方案、代码思路随手留痕，无需上传整文件。</div>
+            <div class="item-value">价值：<strong>即输即存</strong>，保护创意时间线</div>
+          </div>
+        </div>
+        <div class="tier-foot">
+          <div class="tier-price"><strong>按次</strong> 单次低门槛 · 打包更划算</div>
+          <span class="effect-tag level-a">效力：电子证据 · 可质证</span>
+        </div>
+      </div>
+
+      <!-- 第 2 层：进阶高效 -->
+      <div class="service-tier">
+        <div class="tier-top">
+          <div class="tier-index">TIER 2</div>
+          <div class="tier-head">
+            <h3>进阶高效存证 <span class="tier-badge badge-mid">套餐 · 几十 ~ 几百元</span></h3>
+            <div class="tier-pain">
+              <span class="pain-label">痛点：</span><span class="pain-value">项目、持续更新的文档、一批批要留痕的素材——手动逐条存证费时费力，证据还零散不规范。</span>
+            </div>
+          </div>
+        </div>
+        <div class="service-list">
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>批量文件存证</div>
+            <div class="item-desc">几十份合同、上百张图一次打包哈希，生成一份汇总存证证书，形成完整证据链。</div>
+            <div class="item-value">价值：<strong>完整证据链</strong>，单价比单份更低</div>
+          </div>
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>自动定期存证</div>
+            <div class="item-desc">持续更新的文档、日志、博客设定周期自动锚定，长期留痕无需手动操作。</div>
+            <div class="item-value">价值：<strong>自动化跑批</strong>，省时省心</div>
+          </div>
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>证据包导出</div>
+            <div class="item-desc">一键导出含原始文件 + 哈希 + 锚定凭证 + 核验说明的标准化证据包，可直接提交。</div>
+            <div class="item-value">价值：<strong>规范可直接提交</strong>，省去整理</div>
+          </div>
+        </div>
+        <div class="tier-foot">
+          <div class="tier-price"><strong>套餐</strong> 批量/自动/打包 · 效率计价</div>
+          <span class="effect-tag level-a">效力：规范证据包 · 可提交质证</span>
+        </div>
+      </div>
+
+      <!-- 第 3 层：司法对接 -->
+      <div class="service-tier">
+        <div class="tier-top">
+          <div class="tier-index">TIER 3</div>
+          <div class="tier-head">
+            <h3>司法对接存证 <span class="tier-badge badge-high">按次/项目 · 几百 ~ 几千元</span></h3>
+            <div class="tier-pain">
+              <span class="pain-label">痛点：</span><span class="pain-value">技术佐证对方律师不认、立案调证流程繁琐、重大案件需要最高等级证明力。</span>
+            </div>
+          </div>
+        </div>
+        <div class="service-list">
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>公证处出证</div>
+            <div class="item-desc">对接合作公证处，由公证处出具正式公证书，直接具备公证效力。</div>
+            <div class="item-value">价值：<strong>公信力升级</strong>，对方无从反驳</div>
+          </div>
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>司法链直连</div>
+            <div class="item-desc">存证数据同步至互联网法院司法链，立案时一键调证，跳过繁琐质证。</div>
+            <div class="item-value">价值：<strong>立案快车道</strong>，取证即用</div>
+          </div>
+          <div class="service-item">
+            <div class="item-name"><span class="dot"></span>司法鉴定意见书</div>
+            <div class="item-desc">对接司法鉴定机构出具正式鉴定意见书，重大案件最高等级的证明力。</div>
+            <div class="item-value">价值：<strong>证明力最强</strong>，重大案件首选</div>
+          </div>
+        </div>
+        <div class="tier-foot">
+          <div class="tier-price"><strong>按次 / 按项目</strong> 公证 · 司法链 · 司法鉴定</div>
+          <span class="effect-tag level-c">效力：公证效力 / 司法采信</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="services-note">
+      <strong>收费的合理性，来自三件事：</strong>技术成本（算力、存储、第三方时间戳服务接口费）· 服务成本（批量处理、自动跑批、人工审核、证据包整理）· 公信力溢价（对接公证处与司法鉴定机构）。我们明码标价、写明边界，不夸大、不做焦虑营销。
+    </div>
+    <div class="services-pay-link">
+      <a href="公益支持说明.html">费用与公益支持，见「公益支持说明」→</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 公开声明摘要区 ===== -->
+<section id="declaration" class="declaration-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>服务效力与边界</h2>
+      <p>我们坦诚说明本服务能做什么、不能做什么，不夸大、不隐瞒。</p>
+    </div>
+    <div class="declaration-grid">
+      <div class="declaration-card">
+        <h4>
+          
+          本服务可以证明
+        </h4>
+        <p>对应哈希的这份数据，不晚于存证操作时间真实存在。</p>
+        <p>可固定文件、创作内容、方案草稿的生成时间，有效杜绝事后补改、倒签伪造。</p>
+        <p>支持任何人公开核验，无需登录、无权限限制。</p>
+      </div>
+      <div class="declaration-card">
+        <h4>
+          
+          本服务无法做到
+        </h4>
+        <p>不承诺存证凭证必然被司法机关采信，证据最终效力由办案机关综合判定。</p>
+        <p>仅固定文件生成时间，无法判定内容本身的真实性、合法性、原创性。</p>
+        <p>仅证明「不晚于存证时间存在」，无法追溯更早的文件生成时间。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 全站 Footer ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-brand">
+      
+      双锚时间戳存证 · 让每个人拥有对自己事实的时间主权
+    </div>
+    <div class="footer-links">
+      <a href="存证必要性.html">首页</a>
+      <a href="双锚时间戳存证服务.html">存证服务</a>
+      <a href="电子存证渠道清单.html">渠道清单</a>
+      <a href="公益支持说明.html">公益支持</a>
+    </div>
+    <p>未连接网关时为演示环境，存证数据仅保存在当前网页本地；连接双锚网关后走真实 TSA / OTS 服务 · 效力表述以司法机关认定为准</p>
+  </div>
+</footer>
+
+<!-- ===== Toast ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== 工具函数 =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function generateCertId() {
+  const now = new Date();
+  const dateStr = now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0');
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `TS-${dateStr}-${random}`;
+}
+
+function formatTime(date) {
+  return date.getFullYear() + '-' +
+    String(date.getMonth() + 1).padStart(2, '0') + '-' +
+    String(date.getDate()).padStart(2, '0') + ' ' +
+    String(date.getHours()).padStart(2, '0') + ':' +
+    String(date.getMinutes()).padStart(2, '0') + ':' +
+    String(date.getSeconds()).padStart(2, '0');
+}
+
+// ===== SHA-256 / SHA-512 哈希计算 =====
+async function calculateHash(buffer, algo) {
+  const hashBuffer = await crypto.subtle.digest(algo, buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function hashBytes(bytes) {
+  return await calculateHash(bytes, 'SHA-256');
+}
+
+async function hashBytesSha512(bytes) {
+  return await calculateHash(bytes, 'SHA-512');
+}
+
+// ===== 存证数据存储（localStorage 模拟） =====
+const STORAGE_KEY = 'timestamp_certs';
+
+function saveCert(cert) {
+  const certs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  certs.push(cert);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(certs));
+}
+
+function findCert(id, hash) {
+  const certs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  return certs.find(c => c.id === id);
+}
+
+// ===== 一键存证流程 =====
+let currentScene = 'file';
+let currentFile = null;
+let currentHash = null;
+let currentCert = null;
+// 各场景独立状态：切换场景不丢失已选文件与哈希（scene -> {file, hash}）
+let sceneState = {};
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileInfo = document.getElementById('fileInfo');
+const fileName = document.getElementById('fileName');
+const fileSize = document.getElementById('fileSize');
+const hashResult = document.getElementById('hashResult');
+const hashValue = document.getElementById('hashValue');
+const stampBtn = document.getElementById('stampBtn');
+const certificate = document.getElementById('certificate');
+const pkgArea = document.getElementById('pkgArea');
+
+// 场景切换
+const sceneOptions = document.querySelectorAll('.scene-option');
+const scenePanels = document.querySelectorAll('.scene-panel');
+
+sceneOptions.forEach(opt => {
+  opt.addEventListener('click', () => {
+    const next = opt.dataset.scene;
+    if (next === currentScene) return;
+    // 保存当前场景状态（文件与哈希）
+    sceneState[currentScene] = {
+      file: currentFile,
+      hash: currentHash
+    };
+    sceneOptions.forEach(o => o.classList.remove('active'));
+    scenePanels.forEach(p => p.classList.remove('active'));
+    opt.classList.add('active');
+    currentScene = next;
+    document.getElementById('scene-' + currentScene).classList.add('active');
+    applySceneState();
+  });
+});
+
+// 恢复/计算当前场景的指纹状态
+function applySceneState() {
+  certificate.classList.remove('visible');
+  pkgArea.classList.remove('visible');
+  stampBtn.innerHTML = '立即存证';
+
+  if (currentScene === 'file') {
+    const st = sceneState['file'] || {};
+    currentFile = st.file || null;
+    currentHash = st.hash || null;
+    if (currentFile) {
+      fileName.textContent = currentFile.name;
+      fileSize.textContent = formatFileSize(currentFile.size);
+      fileInfo.classList.add('visible');
+      hashResult.classList.add('visible');
+      hashValue.textContent = currentHash || '尚未计算';
+      stampBtn.disabled = !currentHash;
+    } else {
+      fileInfo.classList.remove('visible');
+      hashResult.classList.remove('visible');
+      stampBtn.disabled = true;
+    }
+    return;
+  }
+
+  // 文本/网页/邮件：输入保留在 DOM，哈希由输入监听实时维护在 sceneState，切回直接恢复
+  const cached = (sceneState[currentScene] || {}).hash;
+  if (cached) {
+    hashResult.classList.add('visible');
+    hashValue.textContent = cached;
+    currentHash = cached;
+    stampBtn.disabled = false;
+  } else {
+    hashResult.classList.remove('visible');
+    stampBtn.disabled = true;
+  }
+}
+
+// 收集当前场景内容，返回可用于哈希的 Uint8Array，或 null
+function getSceneBytes() {
+  if (currentScene === 'file') {
+    return null; // 文件由 handleFile 处理
+  }
+  if (currentScene === 'text') {
+    const val = document.getElementById('textContent').value;
+    if (!val.trim()) { showToast('请先输入要存证的内容'); return null; }
+    return new TextEncoder().encode(val);
+  }
+  if (currentScene === 'web') {
+    const url = document.getElementById('webUrl').value.trim();
+    const content = document.getElementById('webContent').value;
+    if (!url) { showToast('请输入网页地址'); return null; }
+    return new TextEncoder().encode('URL:' + url + '\nCONTENT:' + content);
+  }
+  if (currentScene === 'mail') {
+    const meta = document.getElementById('mailMeta').value.trim();
+    const content = document.getElementById('mailContent').value;
+    if (!meta && !content) { showToast('请输入邮件信息'); return null; }
+    return new TextEncoder().encode('META:' + meta + '\nCONTENT:' + content);
+  }
+  return null;
+}
+
+dropzone.addEventListener('click', () => fileInput.click());
+
+dropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+  dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) {
+    handleFile(e.dataTransfer.files[0]);
+  }
+});
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    handleFile(e.target.files[0]);
+  }
+});
+
+async function handleFile(file) {
+  currentFile = file;
+  sceneState['file'] = { file: file, hash: currentHash };
+  fileName.textContent = file.name;
+  fileSize.textContent = formatFileSize(file.size);
+  fileInfo.classList.add('visible');
+  hashResult.classList.add('visible');
+  hashValue.textContent = '计算中...';
+  stampBtn.disabled = true;
+  certificate.classList.remove('visible');
+  pkgArea.classList.remove('visible');
+
+  try {
+    const buffer = await file.arrayBuffer();
+    currentHash = await hashBytes(buffer);
+    sceneState['file'] = { file: file, hash: currentHash };
+    hashValue.textContent = currentHash;
+    stampBtn.disabled = false;
+  } catch (err) {
+    hashValue.textContent = '计算失败：' + err.message;
+    showToast('内容指纹计算失败，请重试');
+  }
+}
+
+// 非文件场景：输入内容变化时实时计算指纹
+['textContent', 'webUrl', 'webContent', 'mailMeta', 'mailContent'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('input', async () => {
+      if (currentScene === 'file') return;
+      const bytes = getSceneBytes();
+      if (!bytes) {
+        hashResult.classList.remove('visible');
+        stampBtn.disabled = true;
+        sceneState[currentScene] = { hash: null };
+        return;
+      }
+      hashResult.classList.add('visible');
+      hashValue.textContent = '计算中...';
+      const sceneAtCompute = currentScene;
+      const h = await hashBytes(bytes);
+      if (sceneAtCompute !== currentScene) return; // 等待期间切换了场景，结果交给新场景状态
+      currentHash = h;
+      sceneState[currentScene] = { hash: h };
+      hashValue.textContent = h;
+      stampBtn.disabled = false;
+    });
+  }
+});
+
+// ===== 双锚网关：真实 TSA / OTS 服务连接 =====
+const GATEWAY_KEY = 'evid_gateway_url';
+function defaultGatewayUrl() {
+  if (location.protocol === 'file:') return 'http://127.0.0.1:8787';
+  return location.origin; // Cloudflare Pages Functions：/health /tsa /ots /ots_check
+}
+let gatewayUrl = localStorage.getItem(GATEWAY_KEY) || defaultGatewayUrl();
+let gatewayOnline = false;
+
+const gatewayInput = document.getElementById('gatewayInput');
+const gatewayBtn = document.getElementById('gatewayBtn');
+const gatewayStatus = document.getElementById('gatewayStatus');
+if (gatewayInput) gatewayInput.value = gatewayUrl;
+
+async function gatewayHealth() {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch(gatewayUrl + '/health', { signal: ctrl.signal });
+    clearTimeout(t);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (e) { return null; }
+}
+
+async function gatewayPost(path, body, timeoutMs) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs || 90000);
+  try {
+    const r = await fetch(gatewayUrl + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: ctrl.signal
+    });
+    return await r.json();
+  } finally { clearTimeout(t); }
+}
+
+async function gatewayGet(path, timeoutMs) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs || 15000);
+  try {
+    const r = await fetch(gatewayUrl + path, { signal: ctrl.signal });
+    return await r.json();
+  } finally { clearTimeout(t); }
+}
+
+function setGatewayStatus(cls, text) {
+  if (!gatewayStatus) return;
+  gatewayStatus.className = 'gateway-status ' + cls;
+  gatewayStatus.textContent = text;
+}
+
+if (gatewayBtn) {
+  gatewayBtn.addEventListener('click', async () => {
+    gatewayUrl = gatewayInput.value.trim().replace(/\/+$/, '');
+    localStorage.setItem(GATEWAY_KEY, gatewayUrl);
+    gatewayBtn.disabled = true;
+    gatewayBtn.textContent = '连接中...';
+    setGatewayStatus('wait', '正在连接网关...');
+    const h = await gatewayHealth();
+    gatewayOnline = !!h;
+    gatewayBtn.disabled = false;
+    gatewayBtn.textContent = '测试连接';
+    if (gatewayOnline) {
+      setGatewayStatus('ok', '已连接：TSA=' + h.tsa + ' · OTS=' + (h.ots_calendars || []).join(' / ') + ' · 预计确认 ' + h.confirm_hours + ' 小时');
+    } else {
+      setGatewayStatus('err', '无法连接网关（' + gatewayUrl + '）。请先启动 gateway.py，当前保持本地演示模式。');
+    }
+  });
+}
+
+// 打开页面时自动探测本地网关：在线则直接置为已连接，无需手动点「测试连接」
+(async function autoProbeGateway() {
+  const h = await gatewayHealth();
+  if (h) {
+    gatewayOnline = true;
+    setGatewayStatus('ok', '已连接：TSA=' + h.tsa + ' · OTS=' + (h.ots_calendars || []).join(' / ') + ' · 预计确认 ' + h.confirm_hours + ' 小时');
+  } else {
+    setGatewayStatus('wait', '未连接：当前为本地演示模式（启动 gateway.py 后刷新本页或点「测试连接」，开启真实 TSA / OTS 双锚）');
+  }
+})();
+
+// 更新 localStorage 中某条存证（按 id）
+function updateCert(id, patch) {
+  const certs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  const i = certs.findIndex(c => c.id === id);
+  if (i >= 0) {
+    certs[i] = Object.assign({}, certs[i], patch);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(certs));
+  }
+}
+
+// 格式化"预计可查时间"（HH:MM）
+function fmtConfirmBy(isoStr) {
+  try {
+    const d = new Date(isoStr);
+    const p = n => (n < 10 ? '0' : '') + n;
+    return p(d.getMonth() + 1) + '月' + p(d.getDate()) + '日 ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  } catch (e) { return isoStr; }
+}
+
+// 渲染双锚状态条
+function renderAnchorStrip(mode) {
+  const set = (id, cls, text) => {
+    const el = document.getElementById(id);
+    if (el) { el.className = 'anchor-step ' + cls; el.innerHTML = text; }
+  };
+  set('stepLocal', 'done', '<span class="step-name">① 本地指纹</span>SHA-256 已计算');
+  if (mode === 'live-pending') {
+    set('stepTsa', 'done', '<span class="step-name">② TSA 签名</span>已签 · freetsa.org');
+    set('stepOts', 'active', '<span class="step-name">③ OTS 上链</span>待确认 · 约2小时');
+  } else if (mode === 'live-confirmed') {
+    set('stepTsa', 'done', '<span class="step-name">② TSA 签名</span>已签 · freetsa.org');
+    set('stepOts', 'done', '<span class="step-name">③ OTS 上链</span>已确认 · 可公开核验');
+  } else {
+    set('stepTsa', 'done', '<span class="step-name">② TSA 签名</span>完成（演示）');
+    set('stepOts', 'done', '<span class="step-name">③ OTS 上链</span>完成（演示）');
+  }
+}
+
+stampBtn.addEventListener('click', async () => {
+  if (currentScene !== 'file' && !currentHash) {
+    const bytes = getSceneBytes();
+    if (!bytes) return;
+    hashResult.classList.add('visible');
+    hashValue.textContent = '计算中...';
+    currentHash = await hashBytes(bytes);
+    hashValue.textContent = currentHash;
+  }
+  if (!currentHash) return;
+
+  stampBtn.disabled = true;
+  stampBtn.innerHTML = '<span class="loading"></span> 正在生成存证与佐证包...';
+
+  const timeStr = formatTime(new Date());
+  const cert = {
+    id: generateCertId(),
+    time: timeStr,
+    hash: currentHash,
+    scene: currentScene,
+    fileName: currentFile ? currentFile.name : ''
+  };
+
+  // 网关已连接 → 真实双锚（TSA 秒级返回；OTS 异步待确认）
+  let live = null;
+  if (gatewayOnline) {
+    stampBtn.innerHTML = '<span class="loading"></span> 正在连接 TSA / OTS 服务...';
+    try {
+      const [tsaRes, otsRes] = await Promise.all([
+        gatewayPost('/tsa', { sha256: currentHash }, 60000),
+        gatewayPost('/ots', { sha256: currentHash, id: cert.id }, 90000)
+      ]);
+      if (tsaRes && tsaRes.ok && otsRes && otsRes.ok) {
+        live = { tsa: tsaRes, ots: otsRes };
+      }
+    } catch (e) { live = null; }
+  }
+
+  cert.mode = live ? 'live' : 'demo';
+  cert.tsa = live ? {
+    status: '已签', tsa: live.tsa.tsa, genTime: live.tsa.genTime, tst_b64: live.tsa.tst_b64
+  } : null;
+  cert.ots = live ? {
+    status: 'pending', id: live.ots.id, submittedAt: live.ots.submitted_at,
+    confirmBy: live.ots.confirm_by, confirmHours: live.ots.confirm_hours,
+    calendar: live.ots.calendar, ots_b64: live.ots.ots_b64
+  } : null;
+
+  saveCert(cert);
+  currentCert = cert;
+
+  document.getElementById('certId').textContent = cert.id;
+  document.getElementById('certTime').textContent = cert.time;
+  document.getElementById('certHash').textContent = cert.hash;
+  document.getElementById('certTitle').textContent = live
+    ? '存证已受理（双锚已提交）'
+    : '存证成功（演示）';
+
+  if (live) {
+    document.getElementById('certTsa').innerHTML = '<span class="status-pill confirmed">已签 · ' + live.tsa.tsa + '</span>';
+    document.getElementById('certOts').innerHTML = '<span class="status-pill pending">待链上确认</span>';
+    document.getElementById('otsNote').textContent =
+      '存证时间已固定（' + cert.time + '）。OTS 已提交至 ' + live.ots.calendar + '，预计 ' +
+      fmtConfirmBy(live.ots.confirm_by) + ' 链上确认后可公开核验。';
+    renderAnchorStrip('live-pending');
+    document.getElementById('refreshRow').style.display = '';
+  } else {
+    document.getElementById('certTsa').innerHTML = '<span class="status-pill demo">完成（演示）</span>';
+    document.getElementById('certOts').innerHTML = '<span class="status-pill demo">完成（演示）</span>';
+    document.getElementById('otsNote').textContent = '演示模式：未连接真实网关，双锚为本地模拟。启动 gateway.py 并点「测试连接」后可走真实 TSA / OTS。';
+    renderAnchorStrip('demo');
+    document.getElementById('refreshRow').style.display = 'none';
+  }
+
+  certificate.classList.add('visible');
+
+  // 生成佐证包（多重指纹 + 数字签名 + 审计 + 见证）
+  const bytes = currentScene === 'file' && currentFile
+    ? await currentFile.arrayBuffer()
+    : getSceneBytes();
+
+  let sha512 = '';
+  if (bytes) {
+    try { sha512 = await hashBytesSha512(bytes); } catch (e) { sha512 = ''; }
+  }
+
+  const pkg = {
+    format: 'evid-package',
+    version: '1.1',
+    certId: cert.id,
+    certTime: cert.time,
+    mode: cert.mode,
+    sha256: cert.hash,
+    sha512: sha512 || '（当前环境不支持 SHA-512，已用 SHA-256 交叉）',
+    signature: {
+      algo: 'demo-ed25519',
+      note: '演示签名，正式环境由服务端用你的身份密钥签发',
+      value: 'SIG:' + cert.hash.slice(0, 16) + '...'
+    },
+    anchors: {
+      rfc3161: live
+        ? { status: '已签', tsa: live.tsa.tsa, genTime: live.tsa.genTime, token: live.tsa.tst_b64, verify: '以 TSA 根证书校验令牌签名' }
+        : { status: '完成（演示）', tsa: 'Demo TSA', token: cert.hash.slice(0, 24) },
+      ots: live
+        ? { status: '待链上确认（pending）', calendar: live.ots.calendar, submittedAt: live.ots.submitted_at,
+            confirmBy: live.ots.confirm_by, ots_b64: live.ots.ots_b64, verify: 'ots verify 链上核验' }
+        : { status: '完成（演示）', chain: '比特币（演示）', tx: 'OTS-' + cert.hash.slice(0, 16) }
+    },
+    audit: {
+      device: navigator.platform || '未知',
+      userAgent: navigator.userAgent.slice(0, 80),
+      generatedAt: timeStr,
+      note: '前端本地计算哈希，仅提交哈希至网关，未上传原始内容'
+    },
+    witness: {
+      status: '已附加',
+      value: 'WIT:' + cert.hash.slice(8, 24)
+    }
+  };
+
+  // 显示佐证包
+  pkgArea.classList.add('visible');
+
+  // 下载佐证包
+  document.getElementById('pkgDownloadBtn').onclick = () => {
+    const blob = new Blob([JSON.stringify(pkg, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '佐证包_' + cert.id + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('佐证包已下载');
+  };
+
+  // 查看佐证包
+  document.getElementById('pkgViewBtn').onclick = () => {
+    showToast('佐证包已就绪，点击「下载佐证包」保存 .json 文件');
+  };
+
+  // 刷新 OTS 链上状态
+  document.getElementById('otsRefreshBtn').onclick = async () => {
+    if (!currentCert || !currentCert.ots || currentCert.mode !== 'live') return;
+    const btn = document.getElementById('otsRefreshBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading"></span> 查询中...';
+    try {
+      const r = await gatewayPost('/ots_check', { ots_b64: currentCert.ots.ots_b64 }, 30000);
+      if (r && r.ok) {
+        if (r.status === 'confirmed') {
+          currentCert.ots.status = 'confirmed';
+          currentCert.ots.confirmedAt = r.confirmed_at;
+          updateCert(currentCert.id, { ots: currentCert.ots });
+          document.getElementById('certOts').innerHTML = '<span class="status-pill confirmed">已确认 · 可公开核验</span>';
+          document.getElementById('otsNote').textContent =
+            'OTS 已于 ' + (r.confirmed_at || '') + ' 链上确认，凭证升级为可公开核验（' + currentCert.ots.calendar + '）。';
+          renderAnchorStrip('live-confirmed');
+          showToast('OTS 链上确认完成，凭证可公开核验');
+        } else {
+          showToast('仍在等待链上确认，预计 ' + fmtConfirmBy(currentCert.ots.confirmBy) + ' 可查');
+        }
+      } else {
+        showToast('查询失败：' + ((r && r.error) || '未知错误'));
+      }
+    } catch (e) {
+      showToast('查询失败：网关不可达');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '刷新 OTS 链上状态';
+  };
+
+  stampBtn.innerHTML = '立即存证';
+  stampBtn.disabled = false;
+  if (live) {
+    showToast('存证已受理：TSA 已签、OTS 已提交上链，预计 ' + fmtConfirmBy(live.ots.confirm_by) + ' 可查');
+  } else {
+    showToast('存证成功，佐证包已生成（演示环境）');
+  }
+});
+
+// ===== 核验流程 =====
+const verifyBtn = document.getElementById('verifyBtn');
+const verifyResult = document.getElementById('verifyResult');
+const verifyTitle = document.getElementById('verifyTitle');
+const verifyTitleText = document.getElementById('verifyTitleText');
+const verifyDetail = document.getElementById('verifyDetail');
+
+verifyBtn.addEventListener('click', () => {
+  const id = document.getElementById('verifyId').value.trim();
+  const hash = document.getElementById('verifyHash').value.trim().toLowerCase();
+
+  verifyResult.classList.add('visible');
+
+  if (!id || !hash) {
+    verifyResult.className = 'verify-result visible error';
+    verifyTitleText.textContent = '请填写完整信息';
+    verifyDetail.textContent = '存证编号和文件哈希均为必填项，请输入后再核验。';
+    return;
+  }
+
+  const cert = findCert(id, hash);
+
+  if (!cert) {
+    verifyResult.className = 'verify-result visible error';
+    verifyTitleText.textContent = '未找到匹配的存证记录';
+    verifyDetail.innerHTML = `在当前浏览器中未找到编号为 <span class="hash-inline">${id}</span> 的存证记录。请检查存证编号是否正确，或确认是否在同一浏览器中进行的存证操作。`;
+    return;
+  }
+
+  if (cert.hash !== hash) {
+    verifyResult.className = 'verify-result visible error';
+    verifyTitleText.textContent = '哈希值不匹配';
+    verifyDetail.innerHTML = `存证编号 <span class="hash-inline">${id}</span> 存在，但输入的哈希值与存证时记录的不一致。<br><br>存证时哈希：<span class="hash-inline">${cert.hash}</span><br>输入的哈希：<span class="hash-inline">${hash}</span><br><br>可能原因：文件已被修改，或输入的哈希有误。`;
+    return;
+  }
+
+  verifyResult.className = 'verify-result visible success';
+  verifyTitleText.textContent = '核验通过';
+  let anchorNote = '';
+  if (cert.ots && cert.mode === 'live') {
+    if (cert.ots.status === 'confirmed') {
+      anchorNote = '<br><br><span class="status-pill confirmed">OTS 已链上确认</span> · ' + (cert.ots.confirmedAt || cert.ots.confirmBy) + ' · ' + cert.ots.calendar;
+    } else {
+      anchorNote = '<br><br><span class="status-pill pending">OTS 待链上确认</span> 预计 ' + fmtConfirmBy(cert.ots.confirmBy) + ' 可公开核验（' + cert.ots.calendar + '）';
+    }
+  } else if (cert.mode === 'demo') {
+    anchorNote = '<br><br><span class="status-pill demo">演示存证</span> 未连接真实双锚网关';
+  }
+  verifyDetail.innerHTML = `存证记录匹配成功。<br><br>存证编号：<span class="hash-inline">${cert.id}</span><br>存证时间：<span class="hash-inline">${cert.time}</span><br>文件哈希：<span class="hash-inline">${cert.hash}</span><br><br>该文件哈希在 <strong>${cert.time}</strong> 已完成双锚时间戳存证，证明此文件不晚于该时间点已存在。${anchorNote}`;
+});
+
+// ===== Tab 切换 =====
+const tabs = document.querySelectorAll('.tool-tab');
+const panels = document.querySelectorAll('.tool-panel');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== 全站导航：移动端菜单 =====
+(function(){
+  var t = document.getElementById('navToggle');
+  var n = document.getElementById('navLinks');
+  if (t && n) {
+    t.addEventListener('click', function(){ n.classList.toggle('open'); });
+    n.addEventListener('click', function(e){
+      if (e.target.tagName === 'A') { n.classList.remove('open'); }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

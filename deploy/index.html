@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>双锚时间戳存证 · 免费在线文件时间存证</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='6' fill='%2300D4FF'/><path d='M12 6h6v6M18 6l-6 6' stroke='%230B1120' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/><circle cx='11' cy='17' r='5' stroke='%230B1120' stroke-width='2.5'/></svg>">
+<style>
+:root {
+  --bg-primary: #0B1120;
+  --border: #2A3A5C;
+  --accent: #00D4FF;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --text-primary: #E8EDF5;
+  --text-secondary: #8A9BB8;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 300;
+  background: rgba(11, 17, 32, 0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1240px; margin: 0 auto; padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: .5px; white-space: nowrap; }
+.nav-links { display: flex; gap: 4px; list-style: none; align-items: center; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none; font-size: 14px;
+  padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: all .2s;
+}
+.nav-links a:hover { color: var(--text-primary); background: var(--accent-dim); }
+.nav-links a.active { color: var(--accent); background: var(--accent-dim); }
+.frame-wrap { position: fixed; top: 60px; left: 0; right: 0; bottom: 0; }
+iframe { width: 100%; height: 100%; border: 0; display: block; background: var(--bg-primary); }
+@media (max-width: 640px) {
+  .nav-inner { padding: 0 12px; }
+  .nav-links a { padding: 7px 10px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <div class="nav-inner">
+    <span class="nav-brand">双锚时间戳存证</span>
+    <ul class="nav-links" id="navLinks">
+      <li><a data-page="存证必要性.html" class="active">首页</a></li>
+      <li><a data-page="双锚时间戳存证服务.html">存证服务</a></li>
+      <li><a data-page="电子存证渠道清单.html">渠道清单</a></li>
+      <li><a data-page="公益支持说明.html">公益支持</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="frame-wrap">
+  <iframe id="frame" src="存证必要性.html" title="双锚时间戳存证站点内容"></iframe>
+</div>
+<script>
+(function () {
+  var frame = document.getElementById('frame');
+  var links = document.querySelectorAll('#navLinks a');
+  function go(page) {
+    frame.src = page;
+    links.forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('data-page') === page);
+    });
+  }
+  links.forEach(function (a) {
+    a.addEventListener('click', function () { go(a.getAttribute('data-page')); });
+  });
+})();
+</script>
+</body>
+</html>

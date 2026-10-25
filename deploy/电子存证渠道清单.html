@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>国内外电子存证渠道清单 · 六类方案可用渠道与网址</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect width='28' height='28' rx='6' fill='%2300D4FF'/><path d='M12 6h6v6M18 6l-6 6' stroke='%230B1120' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/><circle cx='11' cy='17' r='5' stroke='%230B1120' stroke-width='2.5'/></svg>">
+<style>
+:root {
+  --bg-primary: #0B1120;
+  --bg-secondary: #131B2E;
+  --bg-card: #1A2438;
+  --border: #2A3A5C;
+  --border-light: #3A4E75;
+  --accent: #00D4FF;
+  --accent-dim: rgba(0, 212, 255, 0.12);
+  --success: #10B981;
+  --success-dim: rgba(16, 185, 129, 0.12);
+  --warning: #F59E0B;
+  --warning-dim: rgba(245, 158, 11, 0.12);
+  --danger: #F87171;
+  --danger-dim: rgba(248, 113, 113, 0.12);
+  --text-primary: #E8EDF5;
+  --text-secondary: #8A9BB8;
+  --text-muted: #5A6B88;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+/* 导航 */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11, 17, 32, 0.88); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { max-width: 1240px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; color: var(--text-primary); text-decoration: none; white-space: nowrap; }
+.nav-links { display: flex; gap: 2px; list-style: none; flex-wrap: wrap; justify-content: flex-end; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; padding: 7px 10px; border-radius: 6px; font-size: 13px; transition: all 0.2s; white-space: nowrap; }
+.nav-links a:hover, .nav-links a.active { color: var(--accent); background: var(--accent-dim); }
+
+/* Hero */
+.hero { padding: 120px 0 48px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content:''; position:absolute; top:-220px; left:50%; transform:translateX(-50%); width:820px; height:820px; background:radial-gradient(circle, var(--accent-dim) 0%, transparent 70%); pointer-events:none; }
+.hero-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:var(--accent-dim); border:1px solid rgba(0,212,255,0.25); border-radius:100px; font-size:13px; color:var(--accent); margin-bottom:18px; position:relative; z-index:1; }
+.hero h1 { font-size: clamp(28px, 4.4vw, 44px); font-weight: 700; line-height:1.25; margin-bottom:14px; position:relative; z-index:1; letter-spacing:-0.02em; }
+.hero h1 .hl { background: linear-gradient(135deg, var(--accent), #60A5FA); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero p.sub { font-size:15px; color:var(--text-secondary); max-width:680px; margin:0 auto; position:relative; z-index:1; }
+.cat-links { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:24px; position:relative; z-index:1; }
+.cat-links a { color:var(--text-secondary); text-decoration:none; padding:7px 13px; border:1px solid var(--border); border-radius:6px; font-size:13px; transition:all .2s; }
+.cat-links a:hover { color:var(--accent); border-color:rgba(0,212,255,.35); background:var(--accent-dim); }
+.hero-stats { display:flex; gap:14px; justify-content:center; margin-top:26px; flex-wrap:wrap; position:relative; z-index:1; }
+.stat { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 22px; min-width:120px; }
+.stat .num { font-size:24px; font-weight:700; color:var(--accent); font-family:var(--font-mono); }
+.stat .lbl { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+/* section */
+section { padding: 52px 0; }
+.section-header { text-align:center; margin-bottom:34px; }
+.section-header h2 { font-size:24px; font-weight:600; margin-bottom:10px; }
+.section-header p { color:var(--text-secondary); max-width:640px; margin:0 auto; font-size:14px; }
+
+/* 使用说明/图例 */
+.legend { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:22px 26px; margin-bottom:8px; }
+.legend h3 { font-size:15px; color:var(--accent); margin-bottom:12px; }
+.legend ul { list-style:none; }
+.legend li { font-size:13px; color:var(--text-secondary); margin-bottom:8px; padding-left:20px; position:relative; line-height:1.7; }
+.legend li::before { content:"›"; position:absolute; left:4px; top:0; color:var(--accent); font-weight:700; }
+.legend li strong { color:var(--text-primary); }
+.badge-row { display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+.badge { display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:3px 10px; border-radius:100px; white-space:nowrap; }
+
+/* 类别区块 */
+.cat-head { display:flex; align-items:center; gap:14px; margin-bottom:8px; flex-wrap:wrap; }
+.cat-head .num { font-size:14px; font-weight:700; font-family:var(--font-mono); padding:4px 10px; border-radius:6px; }
+.cat-head h2 { font-size:20px; font-weight:700; flex:1; min-width:220px; }
+.cat-head .en { font-size:12px; color:var(--text-muted); font-weight:400; margin-left:8px; }
+.cat-head .cnt { font-size:12px; color:var(--text-secondary); }
+.cat-desc { font-size:13px; color:var(--text-secondary); margin-bottom:18px; line-height:1.7; max-width:1100px; }
+
+/* 表格 */
+.region-label { display:flex; align-items:center; gap:8px; margin:20px 0 10px; font-size:14px; font-weight:600; }
+.region-label .flag { width:8px; height:8px; border-radius:2px; }
+.region-label .count { font-size:12px; color:var(--text-muted); font-weight:400; }
+.table-wrap { overflow-x:auto; border-radius:var(--radius-lg); border:1px solid var(--border); background:var(--bg-card); }
+table.chan { width:100%; border-collapse:collapse; min-width:960px; }
+table.chan th, table.chan td { padding:12px 14px; text-align:left; font-size:13px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.6; }
+table.chan thead th { background:var(--bg-secondary); color:var(--accent); font-weight:600; white-space:nowrap; font-size:12px; letter-spacing:0.02em; }
+table.chan tbody tr:last-child td { border-bottom:none; }
+table.chan tbody tr:hover { background:var(--bg-secondary); }
+table.chan td.name { font-weight:600; color:var(--text-primary); white-space:normal; min-width:150px; }
+table.chan td.url { font-family:var(--font-mono); font-size:12px; word-break:break-all; min-width:170px; }
+table.chan td.url a { color:var(--accent); text-decoration:none; }
+table.chan td.url a:hover { text-decoration:underline; }
+table.chan td.note { color:var(--text-secondary); min-width:280px; }
+table.chan td.src { font-size:11px; color:var(--text-muted); word-break:break-all; min-width:140px; }
+table.chan td.src a { color:var(--text-muted); text-decoration:none; }
+table.chan td.src a:hover { color:var(--accent); text-decoration:underline; }
+table.chan td.v { white-space:nowrap; }
+td.empty-msg { color:var(--warning); padding:22px 16px !important; }
+td.empty-msg .em-title { font-weight:600; color:var(--text-primary); margin-bottom:4px; }
+
+/* 补充说明 */
+.notes { margin-top:16px; background:var(--bg-primary); border:1px solid var(--border); border-radius:var(--radius); padding:14px 18px; }
+.notes .n-title { font-size:12px; color:var(--accent); font-weight:600; margin-bottom:8px; letter-spacing:0.04em; }
+.notes ul { list-style:none; }
+.notes li { font-size:12.5px; color:var(--text-secondary); margin-bottom:6px; padding-left:16px; position:relative; line-height:1.7; }
+.notes li::before { content:"·"; position:absolute; left:2px; color:var(--accent); }
+.notes li strong { color:var(--text-primary); }
+
+/* footer */
+.footer { padding:30px 0; border-top:1px solid var(--border); text-align:center; }
+.footer p { font-size:12px; color:var(--text-muted); line-height:1.8; }
+
+@media (max-width: 860px) {
+  .nav-inner { height: auto; padding: 12px 16px; flex-wrap: wrap; gap: 6px; }
+  .nav-links { display: flex; gap: 2px; flex-wrap: wrap; }
+  .nav-links a { padding: 6px 9px; font-size: 13px; }
+  .hero { padding: 104px 0 40px; }
+}
+.in-frame .navbar{display:none!important}
+.in-frame .hero{padding-top:64px!important}
+</style>
+<script>(function(){if(window.self!==window.top){document.documentElement.classList.add('in-frame');}})();</script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">
+      
+      存证渠道清单
+    </a>
+    <ul class="nav-links">
+      <li><a href="存证必要性.html">首页</a></li>
+      <li><a href="双锚时间戳存证服务.html">存证服务</a></li>
+      <li><a href="电子存证渠道清单.html" class="active">渠道清单</a></li>
+      <li><a href="公益支持说明.html">公益支持</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-badge">按六类方案归类 · 国内外可用的存证渠道</div>
+    <h1>国内外电子存证渠道清单<br><span class="hl">渠道 · 网址 · 收费 · 核验状态一览</span></h1>
+    <p class="sub">以《主流电子存证方案全景》的六类框架为分类基准，逐一核验国内外实际可用的存证渠道/服务；每个渠道给出完整网址、一句话说明（服务内容 / 是否收费 / 适用场景）与来源依据。所有网址核验日期：2026-10-25。</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num">06</div><div class="lbl">方案类别</div></div>
+      <div class="stat"><div class="num">32</div><div class="lbl">国内渠道</div></div>
+      <div class="stat"><div class="num">26</div><div class="lbl">国际渠道</div></div>
+      <div class="stat"><div class="num">56</div><div class="lbl">已核验条目</div></div>
+    </div>
+    <div class="cat-links">
+      <a href="#c1">1 TSA 时间戳</a>
+      <a href="#c2">2 区块链</a>
+      <a href="#c3">3 司法链</a>
+      <a href="#c4">4 公证</a>
+      <a href="#c5">5 取证平台</a>
+      <a href="#c6">6 开放时间戳</a>
+    </div>
+  </div>
+</section>
+
+<section id="usage" style="padding-top:8px;">
+  <div class="container">
+    <div class="legend">
+      <h3>使用说明 · 核验状态图例</h3>
+      <ul>
+        <li><strong>板块划分</strong>：每个类别下设「国内」（中国大陆）与「国际」两个板块；某类确实无可用公开渠道时，明确标注"暂无可用公开渠道"，不做凑数。</li>
+        <li><strong>核验状态</strong>：<span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span> 官网/官方介绍页已直接打开确认可用；<span class="badge" style="background:var(--warning-dim);color:var(--warning);">来源转述</span> 仅见诸二手来源、未直接验证；<span class="badge" style="background:var(--danger-dim);color:var(--danger);">待核验</span> 未能确认存在或访问。</li>
+        <li><strong>收费口径</strong>：每条注明免费/付费/免费额度；公链类（比特币、以太坊、AR 等）上链另有网络手续费，使用前注意对应代币费用。</li>
+        <li><strong>司法链类特别说明</strong>：国内司法链均为法院主导的联盟链，公开网页多为<strong>验证/公示性质</strong>，普通用户需经法院认可的第三方存证应用间接上链，立案时提交存证编号由法院调证。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 1 中心化可信时间戳 ===== -->
+<section id="c1" style="border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="cat-head">
+      <span class="num" style="background:var(--accent-dim);color:var(--accent);">01</span>
+      <h2>中心化可信时间戳<span class="en">TSA · RFC3161</span></h2>
+      <span class="cnt">国内 6 · 国际 6</span>
+    </div>
+    <p class="cat-desc">权威时间戳机构（TSA）按 RFC3161 标准对文件哈希与时间做数字签名，证明"数据不晚于某时刻已存在"。国内多为企业级 B2B 服务（个人自助渠道少）；国际免费/商业服务齐全。</p>
+
+    <div class="region-label"><span class="flag" style="background:#F87171;"></span>国内<span class="count">（中国大陆）</span></div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">联合信任时间戳服务中心（uniTrust）</td><td class="url"><a href="https://www.tsa.cn" target="_blank">https://www.tsa.cn</a></td><td class="note">国内最主流的可信时间戳机构，提供符合 RFC3161 标准的开放 API，企业按调用量计费；个人可通过"权利卫士"APP 自助取证，广泛用于电子证据、知识产权、电子合同司法存证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://m.tsa.cn/openservice.html" target="_blank">m.tsa.cn/openservice.html</a></td></tr>
+        <tr><td class="name">北京数字认证 BJCA</td><td class="url"><a href="https://www.bjca.cn" target="_blank">https://www.bjca.cn</a></td><td class="note">提供 RFC3161 时间戳服务器软硬件产品及在线时间戳服务，时间源取自国家授时中心，企业级部署/云服务，需商务对接。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://service.bjca.cn/private/businessRules.html" target="_blank">service.bjca.cn</a></td></tr>
+        <tr><td class="name">上海CA SHECA</td><td class="url"><a href="https://www.sheca.com" target="_blank">https://www.sheca.com</a></td><td class="note">提供"可信时间戳云服务"，基于国家授时中心时间源，RFC3161 合规，无需单独部署，面向企业用户，按服务计费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.sheca.com/product/5a83e7f3803c4d37a5e07a079a7d5e11" target="_blank">sheca.com/product</a></td></tr>
+        <tr><td class="name">中金金融认证中心 CFCA</td><td class="url"><a href="https://www.cfca.com.cn" target="_blank">https://www.cfca.com.cn</a></td><td class="note">金融行业权威 CA，时间戳服务遵循 GM/T 0033 国密标准（兼容 RFC3161），毫秒级精度，主要面向金融、政务等 B 端客户，企业级需对接。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.cfca.com.cn/20250728/200000920.html" target="_blank">cfca.com.cn</a></td></tr>
+        <tr><td class="name">沃通CA WoSign</td><td class="url"><a href="https://www.wosign.com/tsa/index.htm" target="_blank">https://www.wosign.com/tsa/index.htm</a></td><td class="note">提供 RFC3161+国密双算法时间戳接口与硬件时间戳系统，国家授时中心时间源，页面标注"免费时间戳服务"，企业级 API 对接，面向国内合规场景。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.wosign.com/tsa/index.htm" target="_blank">wosign.com/tsa</a></td></tr>
+        <tr><td class="name">数安时代 GDCA（广东CA）</td><td class="url"><a href="https://www.gdca.com.cn" target="_blank">https://www.gdca.com.cn</a></td><td class="note">信鉴 TrustAUTH 可信时间戳系统，同时遵循 RFC3161 与 GB/T 20520-2006 国标，支持私有部署或云端，企业级电子政务/电商场景。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.gdca.com.cn/products/justsign/timestamp/" target="_blank">gdca.com.cn</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="region-label"><span class="flag" style="background:#10B981;"></span>国际</div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">FreeTSA</td><td class="url"><a href="https://www.freetsa.org" target="_blank">https://www.freetsa.org</a></td><td class="note">完全免费的公开 RFC3161 时间戳服务，无需注册，支持网页在线签名、HTTPS API（/tsr 端点）、TCP 318 端口及 Tor 匿名访问，支持 SHA-1 至 SHA-512，2026-03 已更新为 P-384 证书。个人自助首选。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.freetsa.org/index_zh.php" target="_blank">freetsa.org</a></td></tr>
+        <tr><td class="name">DigiStamp</td><td class="url"><a href="https://www.digistamp.com" target="_blank">https://www.digistamp.com</a></td><td class="note">运营 20+ 年的专业 RFC3161 PKI 时间戳服务商，FIPS 140-2 Level 4 HSM 时钟，提供云端时间戳与 SecureTime Server 私有化部署，按企业用量计费，适合长期归档存证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.digistamp.com/subpage/corporate-and-software-developers/securetime-server" target="_blank">digistamp.com</a></td></tr>
+        <tr><td class="name">Sectigo</td><td class="url"><a href="https://www.sectigo.com" target="_blank">https://www.sectigo.com</a></td><td class="note">公共 TSA 端点 http://timestamp.sectigo.com，RFC3161 兼容（自动选择 RSA/SHA-256/384/512）；购买其代码签名/文档签名证书后可免费用于签名时间戳，企业级 eIDAS 合格时间戳另售。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://sectigo.com/resources/time-stamping-server" target="_blank">sectigo.com</a></td></tr>
+        <tr><td class="name">GlobalSign</td><td class="url"><a href="https://www.globalsign.com" target="_blank">https://www.globalsign.com</a></td><td class="note">RFC3161 可信时间戳 SaaS，独立可审计 UTC 时间源，公共端点 http://timestamp.globalsign.com/tsa/r45standard 随代码签名证书免费使用，企业级长期签名验证方案按需付费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.globalsign.cn/timestamp-service" target="_blank">globalsign.cn</a></td></tr>
+        <tr><td class="name">SwissSign</td><td class="url"><a href="https://www.swisssign.com" target="_blank">https://www.swisssign.com</a></td><td class="note">瑞士官方认证 TSA（ZertES/SCSE 合规），100% 数据存储与运营在瑞士境内，RFC3161 标准，支持云端或本地集成，面向欧洲企业法律文档存证，商务付费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.swisssign.com/en/timestamping-service.html" target="_blank">swisssign.com</a></td></tr>
+        <tr><td class="name">DigiCert</td><td class="url"><a href="https://www.digicert.com" target="_blank">https://www.digicert.com</a></td><td class="note">公共 RFC3161 时间戳端点 http://timestamp.digicert.com，购买其代码签名证书后可免费调用，支持 SHA-1/256/384/512，全球高可用，广泛用于软件签名有效期延长场景。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://knowledge.digicert.com/general-information/rfc3161-compliant-time-stamp-authority-server" target="_blank">digicert.com</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="notes">
+      <div class="n-title">补充说明</div>
+      <ul>
+        <li><strong>Guardtime KSI 未列入本类</strong>：其 KSI（Keyless Signature Infrastructure）基于区块链哈希链聚合，不属于传统 PKI 数字签名的 RFC3161 技术路线（在线验证页 verifier.guardtime.com 可查），应归入"区块链存证"类。</li>
+        <li><strong>国内个人自助渠道稀缺</strong>：上述 6 家国内 CA 均以企业级 B2B 为主；普通个人最便捷的国内渠道是联合信任"权利卫士"APP，国际渠道首选 FreeTSA（免费、网页即用、无需注册）。</li>
+        <li>Sectigo / GlobalSign / DigiCert 的公共 TSA 端点官方定位是配合其证书使用，无证书单独做法律存证时不建议作为唯一证据。</li>
+        <li>沃通 WoSign 国际根证书曾于 2016 年被 Mozilla、Google 等吊销公共信任，但其持有国内《电子认证服务许可证》，时间戳服务在国内司法/政务场景仍具合规效力；需国际互认时建议选用 SwissSign、GlobalSign、DigiCert 等。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2 区块链存证 ===== -->
+<section id="c2" style="border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="cat-head">
+      <span class="num" style="background:var(--success-dim);color:var(--success);">02</span>
+      <h2>区块链存证<span class="en">联盟链 / 公链锚定</span></h2>
+      <span class="cnt">国内 7 · 国际 5</span>
+    </div>
+    <p class="cat-desc">把文件哈希写入区块链（联盟链/公链），借助共识机制与不可篡改性证明"上链后未被改动"。国内以联盟链平台为主（注册即用、基础存证多免费），国际以公链锚定服务为主（需自付网络手续费）。</p>
+
+    <div class="region-label"><span class="flag" style="background:#F87171;"></span>国内<span class="count">（中国大陆）</span></div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">保全网（含掌上取证）</td><td class="url"><a href="https://www.baoquan.com/" target="_blank">https://www.baoquan.com/</a></td><td class="note">数秦科技旗下，基于保全链的电子数据存证/在线取证/司法出证，支持网页或手机上传文件哈希上链，个人与企业均可注册；基础存证免费、司法出证付费，适用于版权、金融、电商维权。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.baoquan.com/" target="_blank">baoquan.com</a></td></tr>
+        <tr><td class="name">易保全</td><td class="url"><a href="https://ebaoquan.org/" target="_blank">https://ebaoquan.org/</a></td><td class="note">重庆易保全旗下，获网信办区块链信息服务备案，提供保全链存证、电子签约、互联网仲裁，司法认可；注册即用、按次/套餐付费，适用于企业合同与知识产权存证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://ebaoquan.org/" target="_blank">ebaoquan.org</a></td></tr>
+        <tr><td class="name">蚂蚁链可信存证</td><td class="url"><a href="https://antdigital.com/products/twc" target="_blank">https://antdigital.com/products/twc</a></td><td class="note">蚂蚁数字科技旗下，企业级联盟链存证服务，支持电子数据快照上链、出证与核验，需商务对接/购买资源包，适用于企业级金融、合同、版权场景。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://antdigital.com/products/twc" target="_blank">antdigital.com</a></td></tr>
+        <tr><td class="name">腾讯至信链</td><td class="url"><a href="https://zxchain.qq.com/" target="_blank">https://zxchain.qq.com/</a></td><td class="note">腾讯联合司法机构推出的开放联盟链，支持 Hash 存证、数字版权存证，个人开发者与企业可在控制台自助接入；新用户有免费存证额度、后续按资源包付费，适用于版权确权与电子证据固定。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://zxchain.qq.com/" target="_blank">zxchain.qq.com</a></td></tr>
+        <tr><td class="name">存证云</td><td class="url"><a href="https://www.cunnar.com/" target="_blank">https://www.cunnar.com/</a></td><td class="note">国投智能（美亚柏科）旗下，电子数据取证+存证+在线公证综合平台，注册即用、按服务付费，偏企事业单位，适用于电子档案、商业秘密、合同存证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.cunnar.com/index.html" target="_blank">cunnar.com</a></td></tr>
+        <tr><td class="name">版权家</td><td class="url"><a href="https://www.bqj.cn/" target="_blank">https://www.bqj.cn/</a></td><td class="note">安妮股份（002235）旗下，版权区块链存证平台，面向个人创作者，上传作品即上链确权，按件付费、直通互联网法院，适用于文字/图片/音视频版权保护。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.bqj.cn/" target="_blank">bqj.cn</a></td></tr>
+        <tr><td class="name">飞洛印（趣链科技）</td><td class="url"><a href="https://public.filoink.cn/" target="_blank">https://public.filoink.cn/</a></td><td class="note">杭州趣链科技旗下，基于印刻联盟链的电子存证平台，提供版权存证、开放存证、公证背书与证据管理，个人原创者与企业均可注册；部分免费+付费出证，适用于原创确权与诉讼取证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://public.filoink.cn/" target="_blank">public.filoink.cn</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="region-label"><span class="flag" style="background:#10B981;"></span>国际</div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Proof of Existence</td><td class="url"><a href="https://proofofexistence.com/" target="_blank">https://proofofexistence.com/</a></td><td class="note">经典比特币链上时间戳服务，上传文件 SHA-256 哈希经 OP_RETURN 写入比特币区块链；免费注册、上链需自付比特币网络手续费，任何人可凭哈希公开验证，适用于开源文档/论文/创意的存在性证明。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://proofofexistence.com/" target="_blank">proofofexistence.com</a></td></tr>
+        <tr><td class="name">OriginStamp</td><td class="url"><a href="https://originstamp.com/" target="_blank">https://originstamp.com/</a></td><td class="note">瑞士团队运营，将哈希经 Merkle 树锚定到比特币与以太坊双链，网页直接提交哈希即可；有免费额度与付费套餐，提供 REST API 与可下载证书，适用于合规审计、知识产权、日志防篡改。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://originstamp.com/en/timestamp" target="_blank">originstamp.com</a></td></tr>
+        <tr><td class="name">Woleet</td><td class="url"><a href="https://woleet.io/" target="_blank">https://woleet.io/</a></td><td class="note">法国服务，提供比特币链上签名与机密时间戳，原始文件不经服务器、仅在本地计算哈希；有免费套餐与企业版，主打 API 集成，适用于企业法律/金融场景的保密存证与电子签名。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://woleet.io/" target="_blank">woleet.io</a></td></tr>
+        <tr><td class="name">Truestamp</td><td class="url"><a href="https://truestamp.com/" target="_blank">https://truestamp.com/</a></td><td class="note">将哈希写入自有账本后定期锚定到 Stellar 与比特币，网页或 API 提交哈希即可；免费个人套餐+付费 Pro/Enterprise，支持公开独立验证，适用于个人创作者、法律合规、专利现有技术证明。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://truestamp.com/" target="_blank">truestamp.com</a></td></tr>
+        <tr><td class="name">Arweave</td><td class="url"><a href="https://www.arweave.com/" target="_blank">https://www.arweave.com/</a></td><td class="note">永久存储公链（blockweave），一次性付费（用 AR 代币）即可将文件永久上链保存，通过 ArDrive 等网页工具自助上传，偏 Web3/开发者场景，适用于需要长期不可灭失的档案、网站、代码存证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.arweave.com/" target="_blank">arweave.com</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="notes">
+      <div class="n-title">补充说明</div>
+      <ul>
+        <li><strong>域名变更提示</strong>：易保全原线索域名 ebaoquan.com 现为公司官网首页，实际存证服务平台在 ebaoquan.org；蚂蚁链原品牌域名 antchain.antgroup.com 仍可访问但偏品牌介绍，产品落地页在 antdigital.com/products/twc；Arweave 官网已由 arweave.org 迁至 arweave.com。</li>
+        <li><strong>线索更正</strong>："TrustStamp"应为 <strong>Truestamp</strong>（truestamp.com）；同名 Trust Stamp（truststamp.ai）主营身份核验，不提供文件哈希存证，未列入。</li>
+        <li>"掌上取证"为保全网（数秦科技）旗下移动端子产品，已并入保全网条目。</li>
+        <li><strong>收费提示</strong>：国内渠道普遍"注册+基础存证免费、司法出证/批量存证付费"；国际公链类服务上链会产生公链网络费用（比特币/Gas/AR 代币）。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3 司法区块链 ===== -->
+<section id="c3" style="border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="cat-head">
+      <span class="num" style="background:rgba(96,165,250,0.14);color:#60A5FA;">03</span>
+      <h2>司法区块链<span class="en">法院联盟链</span></h2>
+      <span class="cnt">国内 5 · 国际 暂无公开渠道</span>
+    </div>
+    <p class="cat-desc">由互联网法院主导建立的司法联盟链，存证数据与法院审判系统打通。注意：公开网页多为<strong>验证/公示性质</strong>，普通用户需经法院认可的第三方存证应用间接上链。</p>
+
+    <div class="region-label"><span class="flag" style="background:#F87171;"></span>国内<span class="count">（中国大陆）</span></div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">北京互联网法院"天平链"存证验证平台</td><td class="url"><a href="https://tpl.bjinternetcourt.gov.cn/" target="_blank">https://tpl.bjinternetcourt.gov.cn/</a></td><td class="note">2018 年上线的司法联盟链公开门户，提供"存证编号验证/版权链验证"（免费、面向公众）；普通用户不能直接上链，须经法院认可的接入应用/节点（如版权家、权证链等侧链应用）间接存证后取得存证编号，立案时北京互联网法院诉讼平台一键调证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://tpl.bjinternetcourt.gov.cn/" target="_blank">tpl.bjinternetcourt.gov.cn</a></td></tr>
+        <tr><td class="name">杭州互联网法院司法区块链（公示/区块浏览页）</td><td class="url"><a href="https://blockchain.netcourt.gov.cn/first" target="_blank">https://blockchain.netcourt.gov.cn/first</a></td><td class="note">全国首个司法区块链（2018-09 上线，蚂蚁链提供技术），公开页实时公示区块高度、交易数、成块时间（核验时区块 5.8 亿+）；为公示/验证性质页面，无公众直接注册存证入口，个人存证须通过法院接入的存证应用完成。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://blockchain.netcourt.gov.cn/first" target="_blank">blockchain.netcourt.gov.cn</a></td></tr>
+        <tr><td class="name">最高人民法院 互联网司法链平台</td><td class="url"><a href="https://sfl.court.gov.cn" target="_blank">https://sfl.court.gov.cn</a></td><td class="note">最高法统一建设的司法链对外门户，面向当事人及第三方机构提供"司法链数据核验"（电子送达文书核验等），免费；本身不受理公众自行存证，法院送达的每份电子文书同步上链存证。页面为动态网页应用，需在网页中操作上传文件核验。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.court.gov.cn/zixun/xiangqing/384671.html" target="_blank">court.gov.cn</a></td></tr>
+        <tr><td class="name">广州互联网法院"网通法链"</td><td class="url"><a href="https://www.gzinternetcourt.gov.cn/#/judicialBigData" target="_blank">https://www.gzinternetcourt.gov.cn/#/judicialBigData</a></td><td class="note">2019-03 上线，"一链两平台"（司法区块链+可信电子证据平台+司法信用共治平台）；官网大数据页实时公示存证条数（2000 万+）；无独立公众存证入口，当事人在诉讼服务平台（ols.gzinternetcourt.gov.cn）提交存证编码即可"一键调证"。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.gzinternetcourt.gov.cn/#/judicialBigData" target="_blank">gzinternetcourt.gov.cn</a></td></tr>
+        <tr><td class="name">上海市高级人民法院 案沪通·司法链数据核验</td><td class="url"><a href="https://www.hshfy.sh.cn/nssfwYtj/home" target="_blank">https://www.hshfy.sh.cn/nssfwYtj/home</a></td><td class="note">上海法院诉讼服务门户内的"司法链数据核验"模块，可上传法院调查令、裁判文书等验证文书真实性（免费）；属最高法司法链体系下的地方核验入口，不面向公众开放自行存证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.hshfy.sh.cn/nssfwYtj/home" target="_blank">hshfy.sh.cn</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="region-label"><span class="flag" style="background:#10B981;"></span>国际</div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td colspan="5" class="empty-msg"><div class="em-title">暂无可用公开渠道</div>截至 2026-10-25，未检索到由外国法院运营、面向公众开放的司法区块链存证入口；美、英、欧盟、新加坡、中国香港等法域的相关讨论多停留在研究/试点层面。</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="notes">
+      <div class="n-title">补充说明</div>
+      <ul>
+        <li><strong>形态共性（重要）</strong>：国内司法链均为法院主导的联盟链，不提供"自助上传存证"入口。实际路径是：经法院认可的第三方存证应用（如版权家、权证链、蚂蚁链合作存证平台等）上链取得存证编号 → 立案时在对应法院诉讼平台提交编号，由法院与联盟链自动比对调证。上表公开网页均为<strong>验证/公示</strong>性质。</li>
+        <li><strong>"天平链"接入有门槛</strong>：接入单位须经意向申请、正式申请、秘书处受理、技术测评、专家评审、接入许可与公布等流程（见天平链官网《应用接入管理规范》），个人/小企业不能直接作为节点，只能使用已接入应用的服务。</li>
+        <li>广州"网通法链"未查到独立公众端存证网页，存证/调证统一并入广州互联网法院诉讼服务平台（ols.gzinternetcourt.gov.cn）。</li>
+        <li>各地高院多已接入最高法统一司法链（sfl.court.gov.cn 体系），未查到各省高院独立、面向公众的公开存证门户；个别省级试点（如辽宁高院"区块链+审判"、沈阳中院知识产权链）为法院内部/审判侧应用，无公开存证入口。</li>
+        <li><strong>国际（研究/试点性质，无公开存证入口）</strong>：阿联酋迪拜国际金融中心法院（DIFC Courts）为法院文书签发基于 NFT 的区块链凭证，可在数秒内全球验证（eregistry.difccourts.ae 提供文书验证页）；迪拜法院在"Smart Dubai 区块链战略"下探索司法文书区块链化。均为法院文书防伪试点，非面向公众的电子存证服务。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4 公证处存证 ===== -->
+<section id="c4" style="border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="cat-head">
+      <span class="num" style="background:var(--warning-dim);color:var(--warning);">04</span>
+      <h2>公证处存证<span class="en">公证保全 · 效力最高</span></h2>
+      <span class="cnt">国内 7 · 国际 3</span>
+    </div>
+    <p class="cat-desc">公证机构作为中立第三方对取证过程与数据做公证保全，出具公证书（民诉法第 72 条，效力最高）。国内分"第三方在线存证平台"与"公证处在线办证入口"两类；国际以美国远程在线公证（RON）最成熟。</p>
+
+    <div class="region-label"><span class="flag" style="background:#F87171;"></span>国内<span class="count">（中国大陆）</span></div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">公证云·电子数据保管平台（厦门法信公证云科技）</td><td class="url"><a href="https://www.ezcun.com/" target="_blank">https://www.ezcun.com/</a></td><td class="note">全国公证机构共建的电子数据取证/存证/出证一体平台，提供网页取证、录音录像、页面取证等工具，由合作公证处出具保全证据公证书或存证证明；按取证/出证事项收费，取证工具可自助使用、出证需对接公证处；存证可全流程线上，正式公证书需公证处制证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.ezcun.com/aboutUs.htm" target="_blank">ezcun.com</a></td></tr>
+        <tr><td class="name">公证云·在线公证办证平台（egongzheng）</td><td class="url"><a href="https://www.egongzheng.com/" target="_blank">https://www.egongzheng.com/</a></td><td class="note">在线向公证处申办公证（委托、声明、涉外、继承等），覆盖 32 省市 807 家公证处，可网页/APP/微信申请、上传材料、审核、缴费；多数事项"最多跑一次"或邮寄送达，按公证事项收费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.egongzheng.com/" target="_blank">egongzheng.com</a></td></tr>
+        <tr><td class="name">北京市方圆公证处·电子数据区块链保全平台</td><td class="url"><a href="https://www.bjnetnotary.com/" target="_blank">https://www.bjnetnotary.com/</a></td><td class="note">北京代表性公证处自营的区块链电子证据取证与在线对接公证平台，24 小时在线取证工具、在线审核制证，公证书用于诉讼/仲裁；可线上自助存证，出证在线办理。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.bjnetnotary.com/index" target="_blank">bjnetnotary.com</a></td></tr>
+        <tr><td class="name">上海市东方公证处（上海公证网/一网通办入口）</td><td class="url"><a href="https://www.sh-notary.org.cn/" target="_blank">https://www.sh-notary.org.cn/</a></td><td class="note">上海规模较大的公证处，官网及"随申办"/一网通办提供网上咨询、收件、预审、受理，部分涉外及家事事项可网上办理；按事项收费，身份核验/原件核验环节仍可能需到现场或视频核验。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://zwdt.sh.gov.cn/govPortals/bsfw/item/157866dd-8e92-4ee9-bebc-d5ab52e44917" target="_blank">zwdt.sh.gov.cn</a></td></tr>
+        <tr><td class="name">深圳公证处·在线公证平台/远程视频办证大厅</td><td class="url"><a href="https://zxsb.szgzc.net.cn/" target="_blank">https://zxsb.szgzc.net.cn/</a></td><td class="note">深圳公证处官方在线申办与远程视频办证大厅，支持视频咨询、材料预审、在线签署、在线支付，公证书 3 日内领取或邮寄；已入选司法部海外远程视频公证试点，部分事项可全流程线上。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.szgzc.net.cn/xxgk/gzdt/202501/t20250108_1007.html" target="_blank">szgzc.net.cn</a></td></tr>
+        <tr><td class="name">广州公证处·电子数据保全证据系统</td><td class="url"><a href="https://bq.gz-notary.com/" target="_blank">https://bq.gz-notary.com/</a></td><td class="note">广州公证处自营在线确权、取证、公证一站式存证系统（北斗授时），提供全流程线上化公证业务申请办理，公证书足不出户申请；适用电子数据保全证据，按事项收费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://bq.gz-notary.com/index/home" target="_blank">bq.gz-notary.com</a></td></tr>
+        <tr><td class="name">浙江省杭州市杭州互联网公证处</td><td class="url"><a href="https://www.netnotary.org.cn/" target="_blank">https://www.netnotary.org.cn/</a></td><td class="note">全国首家互联网主题公证处，线上办理预约、咨询、受理及在线视频公证（人脸识别+视频连线+电子签名），金融/知识产权/家事领域见长；在线视频事项可"零跑"办理，按事项收费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.netnotary.org.cn/hhgzc/web/kzbzdt/zxspgz/index.html" target="_blank">netnotary.org.cn</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="region-label"><span class="flag" style="background:#10B981;"></span>国际</div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Notarize（美国）</td><td class="url"><a href="https://www.notarize.com/" target="_blank">https://www.notarize.com/</a></td><td class="note">美国主流远程在线公证（RON）平台，24/7 即时连接持牌公证人，视频会话+身份核验+电子签章；个人首份公证 $25、每份附加印章 $15、见证人 $15；全流程线上完成，适用于美国允许 RON 的州及涉外文件。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.notarize.com/pricing" target="_blank">notarize.com</a></td></tr>
+        <tr><td class="name">NotaryCam（美国）</td><td class="url"><a href="https://www.notarycam.com/" target="_blank">https://www.notarycam.com/</a></td><td class="note">早期且较成熟的远程在线公证服务商，提供 7×24 视频远程公证、房产过户（eClose）及企业白标方案；美国境内签署每份印章约 $25，全程线上、无需到现场。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.notarycam.com/services" target="_blank">notarycam.com</a></td></tr>
+        <tr><td class="name">DocuSign Notary（美国）</td><td class="url"><a href="https://www.docusign.com/products/notary" target="_blank">https://www.docusign.com/products/notary</a></td><td class="note">DocuSign 旗下远程在线公证（RON）产品，集成 eSignature、身份核验与音视频会话，并有 Notary On-Demand 按需公证人网络；面向企业/有公证人资质机构使用，全流程线上，按订阅/用量计费。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.docusign.com/products/notary" target="_blank">docusign.com</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="notes">
+      <div class="n-title">补充说明</div>
+      <ul>
+        <li>国内"公证处存证"分两类：① 第三方在线存证/取证平台（公证云 ezcun、各地公证处自营区块链保全系统），主打电子证据固定并由合作公证处出证；② 公证处在线办证入口（egongzheng、深圳/广州/杭州平台及北京/上海线上渠道），主打申办公证文书。前者基本可全流程线上自助存证，后者中身份核验、原件核验及部分重大事项（遗嘱、继承、不动产）仍需到现场或视频+邮寄配合。</li>
+        <li>国内线上办理入口多依赖微信小程序/公众号（如"京证便民""国立E公证""随申办"专区），网页端入口以本表官网/在线平台为准；实际可办事项范围以各公证处实时公告为准。</li>
+        <li>国际 RON 目前以美国最成熟（Notarize、NotaryCam、DocuSign Notary），但各州对 RON 及跨境远程公证有不同法律限制，是否被中国境内认可使用需结合公文书使用目的另行确认。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5 第三方综合取证平台 ===== -->
+<section id="c5" style="border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="cat-head">
+      <span class="num" style="background:var(--danger-dim);color:var(--danger);">05</span>
+      <h2>第三方综合取证平台<span class="en">录屏 · 网页取证 · 聊天记录</span></h2>
+      <span class="cnt">国内 7 · 国际 4</span>
+    </div>
+    <p class="cat-desc">把电子签名、时间戳、哈希加密组合，支持手机/网页实时取证（录屏、网页抓取、聊天记录），平台自有服务器存储并出具存证凭证。本类与"区块链存证"类有重叠，此处突出取证功能定位。</p>
+
+    <div class="region-label"><span class="flag" style="background:#F87171;"></span>国内<span class="count">（中国大陆）</span></div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">权利卫士（联合信任时间戳）</td><td class="url"><a href="https://www.tsa.cn/w" target="_blank">https://www.tsa.cn/w</a></td><td class="note">联合信任旗下取证 App，手机端录屏/录像/拍照/网页取证并叠加可信时间戳，App 免费下载、出证增值收费，适用知识产权维权与现场事实固定。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.tsa.cn/w" target="_blank">tsa.cn/w</a></td></tr>
+        <tr><td class="name">公证云</td><td class="url"><a href="https://www.ezcun.com/" target="_blank">https://www.ezcun.com/</a></td><td class="note">全国公证机构共建的电子数据保管平台，提供网页取证、"见证实录"屏幕录像+网页截取、手机取证、微信聊天存证证明，按次/套餐收费并可办公证书。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.ezcun.com/web/home" target="_blank">ezcun.com</a></td></tr>
+        <tr><td class="name">存证云</td><td class="url"><a href="https://www.cunnar.com/" target="_blank">https://www.cunnar.com/</a></td><td class="note">美亚柏科/国投智能（300188）旗下一站式电子证据综合平台，取证魔方+存证+在线公证/司法鉴定出证，面向企事业单位收费，适用金融、知产、物流。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.cunnar.com/f/135.html" target="_blank">cunnar.com</a></td></tr>
+        <tr><td class="name">移动公证</td><td class="url"><a href="https://4009991000.com/" target="_blank">https://4009991000.com/</a></td><td class="note">风语者科技旗下互联网证据保全平台，电话/现场录音、隐蔽录像、网页一键存证+PB 级云端托管，按分钟/次扣费，适用个人催收与纠纷取证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://4009991000.com/" target="_blank">4009991000.com</a></td></tr>
+        <tr><td class="name">安存语录</td><td class="url"><a href="https://www.95105856.com/" target="_blank">https://www.95105856.com/</a></td><td class="note">杭州安存旗下"录音公证电话"，通话实时加密上传云端、事后可申请公证出证，按通话时长计费，适用法院送达、借贷沟通、催收录音。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.95105856.com/" target="_blank">95105856.com</a></td></tr>
+        <tr><td class="name">易保全</td><td class="url"><a href="https://www.ebaoquan.org/" target="_blank">https://www.ebaoquan.org/</a></td><td class="note">重庆易保全旗下电子数据保全平台，手机录音录像/网页存证+区块链+公证处/仲裁委节点同步，按套餐收费；偏区块链存证但含移动端现场取证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.ebaoquan.org/mobile/" target="_blank">ebaoquan.org</a></td></tr>
+        <tr><td class="name">版权家</td><td class="url"><a href="https://www.bqj.cn/" target="_blank">https://www.bqj.cn/</a></td><td class="note">安妮股份（002235）旗下版权综合服务平台，作品创作即存证+侵权监测+取证维权+版权登记，按次/会员收费，适用图文、短视频原创确权维权。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.bqj.cn/aboutUs/" target="_blank">bqj.cn</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="region-label"><span class="flag" style="background:#10B981;"></span>国际</div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Pagefreezer（含 WebPreserver）</td><td class="url"><a href="https://www.pagefreezer.com/" target="_blank">https://www.pagefreezer.com/</a></td><td class="note">加拿大企业级网页/社交媒体自动归档 SaaS，旗下 WebPreserver 可手动抓取第三方网页与社媒内容作为可呈堂证据，企业订阅制，适用合规留痕与诉讼取证。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.pagefreezer.com/" target="_blank">pagefreezer.com</a></td></tr>
+        <tr><td class="name">Hanzo（Chronicle）</td><td class="url"><a href="https://www.hanzo.co/" target="_blank">https://www.hanzo.co/</a></td><td class="note">企业级动态网页与协作数据保全平台，Chronicle 高保真抓取交互式网页、支持法律保全（legal hold）与 eDiscovery，企业询价订阅，适用监管合规与调查。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.hanzo.co/" target="_blank">hanzo.co</a></td></tr>
+        <tr><td class="name">Perma.cc</td><td class="url"><a href="https://perma.cc/" target="_blank">https://perma.cc/</a></td><td class="note">哈佛图书馆发起的学术/法律永久链接服务，一键归档网页 HTML 与时间戳截图、生成不可变 Perma Link，图书馆/期刊机构免费、个人付费，适用引用文献防链接失效。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://perma-archives.org" target="_blank">perma-archives.org</a></td></tr>
+        <tr><td class="name">Stillio</td><td class="url"><a href="https://www.stillio.com/" target="_blank">https://www.stillio.com/</a></td><td class="note">荷兰定时网页截图归档 SaaS，按小时/日/周自动截图并叠加时间戳水印，可对接 Google Drive/Dropbox，订阅制，适用合规举证与商标侵权监测。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.stillio.com/" target="_blank">stillio.com</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="notes">
+      <div class="n-title">补充说明</div>
+      <ul>
+        <li><strong>Archive 1812 未列入</strong>：以"Archive 1812 / archive1812.com / 法国网页归档取证"等多组关键词检索均未定位到对应服务，https://www.archive1812.com/ 直接访问失败，疑似线索名称有误或服务已不存在。</li>
+        <li><strong>HARICA 未列入</strong>：经核实其为希腊高校网络联盟（GUnet）下属电子认证机构（CA/信任服务提供者），主营合格电子签名、S/MIME 与 TLS 服务器证书，不提供录屏/网页抓取/聊天记录类现场取证功能，与本类别定位不符。</li>
+        <li>易保全、版权家虽以区块链/版权登记为卖点，但均含移动端现场取证与网页取证模块，故保留并在说明中突出取证定位。</li>
+        <li>国际板块均为企业级 SaaS 或学术公益服务；如需轻量免费工具可补充 Webrecorder、Smarsh 等。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6 开放时间戳 / 双锚 ===== -->
+<section id="c6" style="border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="cat-head">
+      <span class="num" style="background:rgba(59,130,246,0.14);color:#60A5FA;">06</span>
+      <h2>开放时间戳 / 双锚<span class="en">OpenTimestamps · 去中心化锚定</span></h2>
+      <span class="cnt">国内 暂无 · 国际 8</span>
+    </div>
+    <p class="cat-desc">OpenTimestamps 将文件哈希锚定公共区块链（如比特币），不依赖单一权威；可叠加 RFC3161 形成"权威签名+去中心化锚定"双锚。OTS 协议与公共 calendar 全部免费（链上手续费由运营方承担）。</p>
+
+    <div class="region-label"><span class="flag" style="background:#F87171;"></span>国内<span class="count">（中国大陆）</span></div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td colspan="5" class="empty-msg"><div class="em-title">暂无可用公开渠道</div>截至 2026-10-25 未检索到中国大陆有"去权威/开放"类公开时间戳服务；国内"可信时间戳"（联合信任、沃通等）均为权威型商业 TSA、收费，不属本类别。</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="region-label"><span class="flag" style="background:#10B981;"></span>国际</div>
+    <div class="table-wrap"><table class="chan">
+      <thead><tr><th style="width:16%;">渠道</th><th style="width:18%;">网址</th><th style="width:44%;">一句话说明</th><th style="width:9%;">核验状态</th><th style="width:13%;">来源依据</th></tr></thead>
+      <tbody>
+        <tr><td class="name">OpenTimestamps 官网</td><td class="url"><a href="https://opentimestamps.org/" target="_blank">https://opentimestamps.org/</a></td><td class="note">官方标准与在线 stamp/upgrade 网页入口，哈希锚定比特币，免费、无需注册（链上手续费由 calendar 承担）。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://opentimestamps.org/" target="_blank">opentimestamps.org</a></td></tr>
+        <tr><td class="name">OTS GitHub 组织（客户端/库）</td><td class="url"><a href="https://github.com/opentimestamps" target="_blank">https://github.com/opentimestamps</a></td><td class="note">官方 ots CLI（opentimestamps-client）、python-/javascript-/rust-/java-opentimestamps 多语言开源库，免费自建与二次开发。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://github.com/opentimestamps" target="_blank">github.com/opentimestamps</a></td></tr>
+        <tr><td class="name">OTS 公共 calendar 池（默认 4 台）</td><td class="url"><a href="https://a.pool.opentimestamps.org" target="_blank">a.pool.opentimestamps.org</a> · <a href="https://b.pool.opentimestamps.org" target="_blank">b.pool.opentimestamps.org</a> · <a href="https://a.pool.eternitywall.com" target="_blank">a.pool.eternitywall.com</a> · <a href="https://ots.btc.catallaxy.com" target="_blank">ots.btc.catallaxy.com</a></td><td class="note">客户端默认 upstream calendar，免费、免注册；底层即 Alice/Bob/Finney/Catallaxy 四节点，历史直连域名（如 bob.btc.calendar.opentimestamps.org）仍在运行。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://raw.githubusercontent.com/opentimestamps/opentimestamps-client/master/otsclient/cmds.py" target="_blank">客户端默认值</a></td></tr>
+        <tr><td class="name">FreeTSA（双锚的 TSA 组件）</td><td class="url"><a href="https://freetsa.org/" target="_blank">https://freetsa.org/</a></td><td class="note">免费 RFC3161 TSA，含在线签名网页；与 OTS 叠加即"权威签名+链上锚定"双锚；2026-03 起证书升级为 P-384。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://freetsa.org/" target="_blank">freetsa.org</a></td></tr>
+        <tr><td class="name">DigiStamp（e-timestamp）</td><td class="url"><a href="https://www.digistamp.com/" target="_blank">https://www.digistamp.com/</a></td><td class="note">商业级 RFC3161 TSA，审计/合规可信，付费，适合作双锚中的权威时间源。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.digistamp.com/" target="_blank">digistamp.com</a></td></tr>
+        <tr><td class="name">OriginStamp</td><td class="url"><a href="https://originstamp.com/" target="_blank">https://originstamp.com/</a></td><td class="note">瑞士区块链时间戳/存证服务（已扩展 OriginVault 数据封存），有免费额度与企业付费档。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://originstamp.com/" target="_blank">originstamp.com</a></td></tr>
+        <tr><td class="name">Woleet</td><td class="url"><a href="https://www.woleet.io/" target="_blank">https://www.woleet.io/</a></td><td class="note">法国区块链时间戳+电子签名 SaaS/API，文件不上传仅锚哈希、隐私保护，付费，eIDAS/GDPR 合规。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.woleet.io/" target="_blank">woleet.io</a></td></tr>
+        <tr><td class="name">BitProof</td><td class="url"><a href="https://www.bitproof.org/" target="_blank">https://www.bitproof.org/</a></td><td class="note">基于 OTS 的在线文件/网页快照时间戳，仅上传哈希、免费、开源，便于新闻/研究留痕。</td><td class="v"><span class="badge" style="background:var(--success-dim);color:var(--success);">已核验</span></td><td class="src"><a href="https://www.bitproof.org/" target="_blank">bitproof.org</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="notes">
+      <div class="n-title">补充说明</div>
+      <ul>
+        <li><strong>calendar 列表细节</strong>：OTS 客户端当前默认 upstream 为上述 4 个 pool 域名；pool 背后对应历史上的 Alice、Bob、Finney、Catallaxy 四台 calendar，历史直连域名如 alice.btc.calendar.opentimestamps.org、bob.btc.calendar.opentimestamps.org 仍在运行（bob 实测在线）。</li>
+        <li><strong>双锚做法</strong>：对同一文件哈希先做 OTS 链上锚定，再用 FreeTSA（免费）或 DigiStamp（商业）签发 RFC3161，即可同时拥有"去权威链上证明"与"权威 CA 时间戳"，相互独立、交叉验证。</li>
+        <li><strong>收费口径</strong>：OTS 协议与全部公共 calendar 免费（矿工费由运营方承担）；FreeTSA 免费（商用需联系）；OriginStamp/Woleet/DigiStamp 为付费或 freemium；BitProof 免费。</li>
+        <li><strong>国内说明</strong>：未检索到中国大陆有开放/去权威的公开时间戳服务；国内合规场景通常使用联合信任等权威型商业 TSA，与本类"开放时间戳"定位不同，故国内板块为空。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>国内外电子存证渠道清单 · 按《主流电子存证方案全景》六类框架归类 · 核验日期 2026-10-25</p>
+    <p>核验状态说明：已核验=官网/官方介绍页直接打开确认；来源转述=仅见诸二手来源；待核验=未能确认。价格与可用性可能随时间变化，使用前请以官网实时信息为准。</p>
+  </div>
+</footer>
+
+</body>
+</html>
