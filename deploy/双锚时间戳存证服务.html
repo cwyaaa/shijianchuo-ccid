@@ -204,6 +204,7 @@ section { padding: 80px 0; }
 .pkg-item.done .pkg-check { background: var(--success-dim); color: var(--success); }
 .pkg-download { display: flex; gap: 10px; flex-wrap: wrap; }
 .pkg-download .btn { flex: 1; justify-content: center; }
+.pkg-note { margin-top: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.7; }
 
 /* ===== 核验结果 ===== */
 .verify-result { margin-top: 24px; padding: 20px; border-radius: var(--radius); display: none; }
@@ -526,7 +527,10 @@ section { padding: 80px 0; }
           <div class="pkg-download">
             <button class="btn btn-secondary" id="pkgViewBtn">查看佐证包</button>
             <button class="btn btn-primary" id="pkgDownloadBtn">下载佐证包 (.json)</button>
+            <button class="btn btn-secondary" id="pkgTsrBtn">下载 .tsr 时间戳</button>
+            <button class="btn btn-secondary" id="pkgOtsBtn">下载 .ots 上链凭证</button>
           </div>
+          <div class="pkg-note">核验路径：.tsr 上传 FreeTSA 官网验证（freetsa.org → 验证时间戳）；.ots 保存后用 OpenTimestamps 客户端或官网核验（链上确认约需 2 小时，与 OTS 官方流程一致）。</div>
         </div>
       </div>
     </div>
@@ -1163,7 +1167,7 @@ stampBtn.addEventListener('click', async () => {
 
   cert.mode = live ? 'live' : 'demo';
   cert.tsa = live ? {
-    status: '已签', tsa: live.tsa.tsa, genTime: live.tsa.genTime, tst_b64: live.tsa.tst_b64
+    status: '已签', tsa: live.tsa.tsa, genTime: live.tsa.genTime, tst_b64: live.tsa.tst_b64, tsr_b64: live.tsa.tsr_b64
   } : null;
   cert.ots = live ? {
     status: 'pending', id: live.ots.id, submittedAt: live.ots.submitted_at,
@@ -1224,7 +1228,8 @@ stampBtn.addEventListener('click', async () => {
     },
     anchors: {
       rfc3161: live
-        ? { status: '已签', tsa: live.tsa.tsa, genTime: live.tsa.genTime, token: live.tsa.tst_b64, verify: '以 TSA 根证书校验令牌签名' }
+        ? { status: '已签', tsa: live.tsa.tsa, genTime: live.tsa.genTime, token: live.tsa.tst_b64,
+            tsr_b64: live.tsa.tsr_b64, verify: '下载 .tsr 文件，上传 FreeTSA 官网可验证（freetsa.org → 验证时间戳）' }
         : { status: '完成（演示）', tsa: 'Demo TSA', token: cert.hash.slice(0, 24) },
       ots: live
         ? { status: '待链上确认（pending）', calendar: live.ots.calendar, submittedAt: live.ots.submitted_at,
@@ -1265,6 +1270,52 @@ stampBtn.addEventListener('click', async () => {
     showToast('佐证包已就绪，点击「下载佐证包」保存 .json 文件');
   };
 
+  // 下载标准 .tsr 时间戳响应文件（可上传 FreeTSA 官网验证）
+  document.getElementById('pkgTsrBtn').onclick = () => {
+    const tsrB64 = pkg.anchors.rfc3161 && pkg.anchors.rfc3161.tsr_b64;
+    if (!tsrB64) { showToast('当前无 .tsr 数据（演示模式），真实存证后可下载'); return; }
+    try {
+      const raw = atob(tsrB64);
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+      const blob = new Blob([bytes], { type: 'application/timestamp-reply' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '时间戳_' + cert.id + '.tsr';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('.tsr 已下载，可上传 FreeTSA 官网验证');
+    } catch (e) {
+      showToast('.tsr 生成失败：' + e.message);
+    }
+  };
+
+  // 下载标准 .ots 上链凭证（DetachedTimestampFile，与 OpenTimestamps 官方格式一致）
+  document.getElementById('pkgOtsBtn').onclick = () => {
+    const otsB64 = pkg.anchors.ots && pkg.anchors.ots.ots_b64;
+    if (!otsB64) { showToast('当前无 .ots 数据（演示模式），真实存证后可下载'); return; }
+    try {
+      const raw = atob(otsB64);
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+      const blob = new Blob([bytes], { type: 'application/vnd.opentimestamps.v1' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '上链凭证_' + cert.id + '.ots';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('.ots 已下载（标准 OpenTimestamps 格式，链上确认后可用于公开核验）');
+    } catch (e) {
+      showToast('.ots 生成失败：' + e.message);
+    }
+  };
+
   // 刷新 OTS 链上状态
   document.getElementById('otsRefreshBtn').onclick = async () => {
     if (!currentCert || !currentCert.ots || currentCert.mode !== 'live') return;
@@ -1279,8 +1330,13 @@ stampBtn.addEventListener('click', async () => {
           currentCert.ots.confirmedAt = r.confirmed_at;
           updateCert(currentCert.id, { ots: currentCert.ots });
           document.getElementById('certOts').innerHTML = '<span class="status-pill confirmed">已确认 · 可公开核验</span>';
-          document.getElementById('otsNote').textContent =
-            'OTS 已于 ' + (r.confirmed_at || '') + ' 链上确认，凭证升级为可公开核验（' + currentCert.ots.calendar + '）。';
+          let blockNote = 'OTS 已于 ' + (r.confirmed_at || '') + ' 链上确认，凭证升级为可公开核验（' + currentCert.ots.calendar + '）。';
+          if (r.block && r.block.height) {
+            blockNote += ' 链上位置：区块 #' + r.block.height;
+            if (r.block.hash) blockNote += '，区块哈希 ' + r.block.hash.slice(0, 18) + '…';
+            blockNote += '。区块链浏览器查看：<a href="' + r.block.explorer + '" target="_blank" rel="noopener" style="color:#00D4FF;">区块 #' + r.block.height + ' 详情</a>。';
+          }
+          document.getElementById('otsNote').innerHTML = blockNote;
           renderAnchorStrip('live-confirmed');
           showToast('OTS 链上确认完成，凭证可公开核验');
         } else {
