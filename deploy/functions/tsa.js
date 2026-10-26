@@ -83,9 +83,12 @@ export async function onRequest(context) {
       signal: AbortSignal.timeout(30000)
     });
     if (!resp.ok) return json({ ok: false, error: 'TSA http ' + resp.status }, 502);
-    const tst = new Uint8Array(await resp.arrayBuffer());
+    const tst = new Uint8Array(await resp.arrayBuffer());   // 完整 TimeStampResp（即标准 .tsr 文件）
     const gen = extractGenTime(tst);
-    return json({ ok: true, tsa: 'freetsa.org (FreeTSA)', tst_b64: bytesToB64(tst), genTime: gen });
+    return json({
+      ok: true, tsa: 'freetsa.org (FreeTSA)',
+      tst_b64: bytesToB64(tst), tsr_b64: bytesToB64(tst), genTime: gen
+    });
   } catch (e) {
     const msg = e && e.name === 'TimeoutError' ? 'TSA timeout' : ('TSA ' + ((e && e.message) || 'failed'));
     return json({ ok: false, error: msg }, 502);
